@@ -17,7 +17,7 @@ Personal dotfiles with modern shell tooling, optimized for Laravel/PHP developme
 ## Quick Start
 
 ```bash
-git clone git@github.com:freekmurze/dotfiles.git ~/.dotfiles
+git clone git@github.com:PickleBoxer/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 bin/install
 ```
