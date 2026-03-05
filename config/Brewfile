@@ -16,10 +16,18 @@ brew "doctl"
 cask "1password-cli"
 brew "git-secret"
 brew "imagemagick"
-brew "mysql"
 brew "yarn"
 brew "ghostscript"
 brew "mackup"
+cask "raycast"
+brew "ddev/ddev/ddev"
+
+# Apps
+cask "google-chrome"
+cask "slack"
+cask "tableplus"
+cask "visual-studio-code"
+cask "dbnging"
 
 # Zsh
 brew "zsh-autosuggestions"
@@ -41,10 +49,12 @@ brew "bottom"
 
 # Development tools
 cask "claude-code"
-cask "zed"
+cask "docker-desktop"
+brew "mkcert"
 
 # Fonts
 cask "font-meslo-lg-nerd-font"
+cask "font-jetbrains-mono"
 
 # QuickLook plugins
 cask "qlcolorcode"

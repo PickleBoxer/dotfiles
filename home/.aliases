@@ -8,16 +8,15 @@ alias cu="composer update"
 alias cr="composer require"
 alias ci="composer install"
 alias cda="composer dump-autoload -o"
-alias hostfile="sudo vi /etc/hosts"
+alias hostfile="sudo code /etc/hosts"
 alias deploy='envoy run deploy'
 alias deploy-code='envoy run deploy-code'
 alias mfs='php artisan migrate:fresh --seed'
 alias nah='git reset --hard;git clean -df'
 
 alias pp="php artisan test --parallel"
-alias sshconfig="vi ~/.ssh/config"
+alias sshconfig="code ~/.ssh/config"
 alias copykey='command cat ~/.ssh/id_ed25519.pub 2>/dev/null || command cat ~/.ssh/id_rsa.pub 2>/dev/null | pbcopy'
-alias tunnel='valet share -subdomain=freekmurze -region=eu'
 
 # JavaScript
 alias jest="./node_modules/.bin/jest"
@@ -39,9 +38,6 @@ alias phpstorm='open -a ~/Applications/PhpStorm.app "`pwd`"'
 
 # VS Code
 alias vscode='code "`pwd`"'
-
-# Zed
-alias zed='open -a /Applications/Zed.app "`pwd`"'
 
 # Redis
 alias flush-redis="redis-cli FLUSHALL"

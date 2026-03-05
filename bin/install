@@ -36,6 +36,15 @@ sudo -v
 
 # Start
 touch ~/.hushlogin
+
+# Check if Xcode Command Line Tools are installed
+if ! xcode-select -p &>/dev/null; then
+  echo "Xcode Command Line Tools not found. Installing..."
+  xcode-select --install
+else
+  echo "Xcode Command Line Tools already installed."
+fi
+
 step "Installing Oh My Zsh"
 if [ ! -d ~/.oh-my-zsh ]; then
     rm -rf ~/.oh-my-zsh
@@ -51,16 +60,11 @@ success "Git configured"
 
 # Symlinks
 step "Creating symlinks"
-rm -f ~/.zshrc ~/.vimrc ~/.vim ~/.mackup.cfg
+rm -f ~/.zshrc ~/.mackup.cfg
 ln -sf ~/.dotfiles/home/.zshrc ~/.zshrc
-ln -sf ~/.dotfiles/home/.vimrc ~/.vimrc
-ln -sf ~/.dotfiles/home/.vim ~/.vim
 ln -sf ~/.dotfiles/macos/.mackup.cfg ~/.mackup.cfg
 mkdir -p ~/bin
 ln -sf ~/.dotfiles/bin/php-format ~/bin/php-format
-mkdir -p ~/.config/zed
-ln -sf ~/.dotfiles/config/zed/settings.json ~/.config/zed/settings.json
-ln -sf ~/.dotfiles/config/zed/keymap.json ~/.config/zed/keymap.json
 success "Symlinks created"
 
 # NPM setup
@@ -109,14 +113,16 @@ step "Installing global Composer packages"
 composer global require laravel/pint || warn "pint already installed or failed"
 composer global require laravel/envoy || warn "envoy already installed or failed"
 composer global require spatie/phpunit-watcher || warn "phpunit-watcher already installed or failed"
-composer global require laravel/valet || warn "valet already installed or failed"
-valet install || warn "valet already installed or failed"
 success "Composer packages processed"
 
-# MySQL
-step "Starting MySQL"
-brew services start mysql || warn "MySQL already running or failed"
-success "MySQL processed"
+# DDEV SSH commit signing
+step "Configuring DDEV SSH commit signing"
+mkdir -p "$HOME/.ddev/homeadditions/.ssh/config.d"
+[ -L "$HOME/.ddev/homeadditions/.gitconfig" ] || ln -s "$HOME/.gitconfig" "$HOME/.ddev/homeadditions/.gitconfig"
+[ -L "$HOME/.ddev/homeadditions/.ssh/id_ed25519.pub" ] || ln -s "$HOME/.ssh/id_ed25519.pub" "$HOME/.ddev/homeadditions/.ssh/id_ed25519.pub"
+ssh-add ~/.ssh/id_ed25519 2>/dev/null || warn "Could not add SSH key to agent (key may not exist yet)"
+mkcert -install || warn "mkcert -install failed"
+success "DDEV SSH commit signing configured"
 
 # Claude Code setup
 echo ""
@@ -133,8 +139,6 @@ echo ""
 success "Installation complete!"
 echo ""
 step "Next steps:"
-echo "  • Configure iTerm2: Set font to 'MesloLGM Nerd Font Mono' and enable Powerline glyphs"
-echo "  • Import Solarized theme: config/iterm/*.itermcolors"
 echo "  • Restore settings: mackup restore (if you have backups)"
 echo "  • Customize aliases: ~/.dotfiles-custom/shell/.aliases"
 echo ""

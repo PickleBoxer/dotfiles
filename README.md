@@ -6,7 +6,7 @@ Personal dotfiles with modern shell tooling, optimized for Laravel/PHP developme
 
 ## Key Features
 
-- **Custom Agnoster Theme** - Clean powerline prompt with no branch symbols, `•` for changes
+- **Starship Prompt** - Fast, cross-shell prompt with Powerline style (configured via `config/starship.toml`)
 - **Version-Controlled Skills & Agents** - All Claude Code skills and agents synced via dotfiles
 - **Fast Tools** - fnm, zoxide, ripgrep, bat, eza (all Rust-based for speed)
 - **Nerd Fonts** - Installed automatically via Brewfile for perfect icon support
@@ -15,6 +15,16 @@ Personal dotfiles with modern shell tooling, optimized for Laravel/PHP developme
 ---
 
 ## Quick Start
+
+### 1. SSH Key (if you don't have one yet)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/PickleBoxer/dotfiles/main/ssh.sh | sh -s your@email.com
+```
+
+This generates an `ed25519` SSH key, configures `~/.ssh/config`, adds it to the keychain, and copies the public key to your clipboard so you can paste it into [GitHub SSH settings](https://github.com/settings/ssh/new).
+
+### 2. Install dotfiles
 
 ```bash
 git clone git@github.com:PickleBoxer/dotfiles.git ~/.dotfiles
@@ -28,7 +38,7 @@ bin/install
 
 ### Shell & Prompt
 
-- **Oh My Zsh** - Framework for managing Zsh configuration (with agnoster theme by default)
+- **Starship** - Fast, minimal cross-shell prompt (replaces Oh My Zsh)
 - **zoxide** - Smart directory jumping based on frecency
 - **fzf** - Fuzzy finder for files and history
 - **direnv** - Automatic environment variables per directory
@@ -50,8 +60,7 @@ bin/install
 - **PHP** - Latest version via Homebrew
 - **Composer** - Dependency manager via Homebrew
 - **Node.js** - LTS version managed via fnm
-- **Laravel Valet** - Local development server
-- **MySQL** - Database with auto-start
+- **DDEV** - Local development environment (Docker-based, used for all projects)
 
 ### QuickLook Plugins
 
@@ -67,27 +76,15 @@ The installation creates symlinks from your home directory to the dotfiles repos
 
 | Symlink Location | Points To | Purpose |
 |-----------------|-----------|---------|
-| `~/.zshrc` | `~/.dotfiles/home/.zshrc` | Main Zsh configuration (Oh My Zsh with custom agnoster theme) |
+| `~/.zshrc` | `~/.dotfiles/home/.zshrc` | Main Zsh configuration (Starship prompt, no Oh My Zsh) |
 | `~/.gitconfig` | `~/.dotfiles/home/.gitconfig` | Git configuration with delta diff viewer |
 | `~/.global-gitignore` | `~/.dotfiles/home/.global-gitignore` | Global Git ignore patterns |
-| `~/.vimrc` | `~/.dotfiles/home/.vimrc` | Vim configuration |
-| `~/.vim/` | `~/.dotfiles/home/.vim/` | Vim runtime files |
 | `~/.mackup.cfg` | `~/.dotfiles/macos/.mackup.cfg` | Mackup backup configuration |
 | `~/.claude/skills` | `~/.dotfiles/config/claude/skills/` | All Claude Code skills (version-controlled) |
 | `~/.claude/agents` | `~/.dotfiles/config/claude/agents/` | All Claude Code agents (version-controlled) |
 | `~/.claude/CLAUDE.md` | `~/.dotfiles/config/claude/CLAUDE.md` | Claude Code configuration |
 | `~/.claude/laravel-php-guidelines.md` | `~/.dotfiles/config/claude/laravel-php-guidelines.md` | Laravel coding standards |
 | `~/.claude/settings.json` | `~/.dotfiles/config/claude/settings.json` | Claude Code settings |
-| `~/.config/zed/settings.json` | `~/.dotfiles/config/zed/settings.json` | Zed editor settings |
-| `~/.config/zed/keymap.json` | `~/.dotfiles/config/zed/keymap.json` | Zed custom keybindings |
-
-To manually symlink the Zed configuration (if not using `bin/install`):
-
-```bash
-mkdir -p ~/.config/zed
-ln -sf ~/.dotfiles/config/zed/settings.json ~/.config/zed/settings.json
-ln -sf ~/.dotfiles/config/zed/keymap.json ~/.config/zed/keymap.json
-```
 
 ### Sourced Files
 
@@ -97,21 +94,39 @@ These files are loaded by `.zshrc` but remain in the dotfiles directory:
 - `home/.functions` - Custom shell functions
 - `home/.exports` - Environment variables
 
-### Custom Agnoster Theme
+### Starship Prompt
 
-The default configuration uses a customized agnoster theme stored in `oh-my-zsh-custom/themes/agnoster.zsh-theme`:
+The prompt is configured in `config/starship.toml` and uses a Powerline-style agnoster look:
 
-**Customizations:**
-- No git branch symbol (cleaner look)
-- Uses `•` for unstaged changes instead of `±`
+**Features:**
 - Powerline arrows for segment separators
+- Git branch and status indicators
+- Error color on non-zero exit codes
 - Requires Nerd Font with powerline glyphs
 
 **Git Status Symbols:**
-- `✚` - Staged changes (files added with `git add`)
-- `•` - Unstaged changes (modified files not yet staged)
-- Yellow background - Uncommitted changes
-- Green background - Clean working directory
+- `!` - Modified files
+- `+` - Staged changes
+- `?` - Untracked files
+- `✘` - Conflicted files
+
+### Switching Prompts
+
+Both shell configs are kept for easy switching:
+
+| File | Description |
+|------|-------------|
+| `home/.zshrc` | **Active** — Starship prompt, no Oh My Zsh overhead |
+| `home/.zshrc.ohmyzsh` | Backup — Oh My Zsh with custom agnoster theme |
+
+To switch back to Oh My Zsh:
+
+```bash
+cd ~/.dotfiles
+mv home/.zshrc home/.zshrc.starship
+mv home/.zshrc.ohmyzsh home/.zshrc
+ln -sf ~/.dotfiles/home/.zshrc ~/.zshrc && exec zsh
+```
 
 ---
 
@@ -141,7 +156,7 @@ nah                 # git reset --hard; git clean -df
 
 ```bash
 # JSON processing with jq
-curl api.github.com/users/freekmurze | jq
+curl api.github.com/users/PickleBoxer | jq
 cat composer.json | jq '.require'
 php artisan tinker --execute="echo json_encode(User::first());" | jq
 
@@ -193,13 +208,31 @@ brew bundle --file=~/.dotfiles/config/Brewfile
 
 **Complete package list:**
 
-- **Core**: node, php, composer, pkg-config, wget, httpie, ncdu, hub, ack, doctl, 1password-cli, git-secret, imagemagick, mysql, yarn, ghostscript, mackup
+- **Core**: node, php, composer, pkg-config, wget, httpie, ncdu, hub, ack, doctl, 1password-cli, git-secret, imagemagick, yarn, ghostscript, mackup
 - **Modern CLI**: zoxide, bat, eza, ripgrep, fd, git-delta, fnm, fzf, direnv, jq, yq, bottom, zsh-autosuggestions
 - **Fonts**: font-meslo-lg-nerd-font (powerline icons and modern glyphs)
 - **QuickLook**: qlcolorcode, qlstephen, qlmarkdown, quicklook-json, qlprettypatch, quicklook-csv, betterzip, suspicious-package
 - **PHP Extensions**: imagick, memcached, xdebug, redis
 - **Global npm**: agent-browser
-- **Global Composer**: laravel/envoy, spatie/phpunit-watcher, laravel/valet
+- **Global Composer**: laravel/envoy, spatie/phpunit-watcher
+
+---
+
+## DDEV SSH Commit Signing
+
+The install script automatically sets up one-time host configuration so all DDEV containers inherit your git identity and SSH commit signing:
+
+- Symlinks `~/.gitconfig` into `~/.ddev/homeadditions/` so every container picks up your signing config
+- Symlinks `~/.ssh/id_ed25519.pub` into the container's `~/.ssh/` (git needs the public key file present)
+- Adds your SSH key to the host agent
+
+After each reboot, run once to forward the agent into containers:
+
+```bash
+ddev auth ssh
+```
+
+If you also need custom SSH host entries inside containers (e.g. a self-hosted GitLab), add them to `~/.ddev/homeadditions/.ssh/config.d/custom.conf`.
 
 ---
 
@@ -210,7 +243,7 @@ brew bundle --file=~/.dotfiles/config/Brewfile
 Install just Claude Code without the full dotfiles:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/freekmurze/dotfiles/main/bin/install-claude-code | bash
+curl -fsSL https://raw.githubusercontent.com/PickleBoxer/dotfiles/main/bin/install-claude-code | bash
 ```
 
 ### What's Included
@@ -299,17 +332,9 @@ Variables load when you enter the directory and unload when you leave.
 
 ## Post-Installation
 
-1. **Configure iTerm2 font**:
-   - Open iTerm2 Preferences (Cmd+,)
-   - Go to Profiles → Text
-   - Change Font to **MesloLGM Nerd Font Mono** (size 12-14)
-   - Enable "Use built-in Powerline glyphs"
+1. **Restore settings** (optional): Run `mackup restore` if you have backups
 
-2. **Import theme**: In iTerm2, import `config/iterm/Solarized Dark Corrected.itermcolors`
-
-3. **Restore settings** (optional): Run `mackup restore` if you have backups
-
-4. **Migrate history** (upgrading only): Run `migration/migrate-z-to-zoxide.sh` if you have `~/.z`
+2. **Migrate history** (upgrading only): Run `migration/migrate-z-to-zoxide.sh` if you have `~/.z`
 
 ---
 
@@ -336,22 +361,6 @@ The `bin/` directory contains helper scripts:
 - **install-claude-code** - Standalone Claude Code installer
 - **update** - Update dotfiles, Homebrew, npm, and Composer packages
 - **doctor** - Health check and diagnostic tool
-
----
-
-## Migration Notes
-
-If upgrading from an older setup:
-
-1. **Directory history**: Run `migration/migrate-z-to-zoxide.sh` to import your `~/.z` data
-2. **Prompt**: The default is now Oh My Zsh with custom agnoster theme
-3. **Version managers**:
-   - fnm replaces nvm for Node.js
-   - Homebrew manages PHP/Composer (no more compilation or mise)
-4. **Fonts**: Meslo Nerd Font replaces Menlo Powerline (installed via Brewfile)
-5. **Claude Code Skills**: Now version-controlled in `config/claude/skills/` and symlinked to `~/.claude/skills`
-6. **Claude Code Agents**: Now version-controlled in `config/claude/agents/` and symlinked to `~/.claude/agents`
-7. **Custom Theme**: Custom agnoster theme stored in `oh-my-zsh-custom/themes/`
 
 ---
 
