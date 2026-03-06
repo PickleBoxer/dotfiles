@@ -21,13 +21,17 @@ brew "ghostscript"
 brew "mackup"
 cask "raycast"
 brew "ddev/ddev/ddev"
+tap "nicoverbruggen/homebrew-cask"
+tap "shivammathur/php"
+tap "shivammathur/extensions"
+cask "phpmon"
 
 # Apps
 cask "google-chrome"
 cask "slack"
 cask "tableplus"
 cask "visual-studio-code"
-cask "dbnging"
+cask "dbngin"
 
 # Zsh
 brew "zsh-autosuggestions"
@@ -49,7 +53,6 @@ brew "bottom"
 
 # Development tools
 cask "claude-code"
-cask "docker-desktop"
 brew "mkcert"
 
 # Fonts
