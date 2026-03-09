@@ -1,6 +1,6 @@
 # My dotfiles
 
-![Terminal](images/terminal.png)
+![Terminal](images/terminal.jpeg)
 
 Personal dotfiles with modern shell tooling, optimized for Laravel/PHP development. Features fast startup times, smart directory navigation, and modern CLI tools.
 
