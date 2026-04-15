@@ -70,6 +70,7 @@ mkdir -p ~/bin
 ln -sf ~/.dotfiles/bin/php-format ~/bin/php-format
 mkdir -p ~/.config/ghostty
 ln -sf ~/.dotfiles/config/ghostty/config ~/.config/ghostty/config
+ln -sf ~/.dotfiles/config/ghostty/themes ~/.config/ghostty/themes
 success "Symlinks created"
 
 # NPM setup

@@ -182,24 +182,29 @@ bin/update          # Update all packages and tools
 This repo is forked from [freekmurze/dotfiles](https://github.com/freekmurze/dotfiles). To check and selectively apply upstream changes:
 
 **1. Check what is new:**
+
 ```bash
 cd ~/.dotfiles
 git fetch upstream
 git log upstream-synced..upstream/main --format="%h %ci %s"
 ```
+
 Empty output means you are fully up to date.
 
 **2. Inspect a specific commit:**
+
 ```bash
 git show <commit-hash> --stat
 ```
 
 **3. Cherry-pick files you want from upstream:**
+
 ```bash
 git checkout upstream/main -- path/to/file-or-folder
 ```
 
 **4. Mark as synced after applying changes:**
+
 ```bash
 git tag -f upstream-synced upstream/main
 ```

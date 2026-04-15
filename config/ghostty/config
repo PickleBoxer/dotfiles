@@ -1,5 +1,5 @@
-term = xterm-256color
+
+theme = dark-2026
+font-family = JetBrainsMono Nerd Font
+font-size = 12
 working-directory = /Users/maticvertacnik/dev/code
-cursor-style = block
-shell-integration-features = no-cursor
-palette = 2=#5ccd86
