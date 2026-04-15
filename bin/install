@@ -65,6 +65,8 @@ ln -sf ~/.dotfiles/home/.zshrc ~/.zshrc
 ln -sf ~/.dotfiles/macos/.mackup.cfg ~/.mackup.cfg
 mkdir -p ~/bin
 ln -sf ~/.dotfiles/bin/php-format ~/bin/php-format
+mkdir -p ~/.config/ghostty
+ln -sf ~/.dotfiles/config/ghostty/config ~/.config/ghostty/config
 success "Symlinks created"
 
 # NPM setup

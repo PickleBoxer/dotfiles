@@ -63,7 +63,7 @@ export MANPATH="${MANPATH-$(manpath)}:$NPM_PACKAGES/share/man"
 export PATH=$HOME/.dotfiles/bin:$PATH
 
 # SSH keys
-ssh-add -A 2>/dev/null
+ssh-add --apple-use-keychain 2>/dev/null
 
 # Xdebug
 export XDEBUG_CONFIG="idekey=VSCODE"
