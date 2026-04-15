@@ -94,26 +94,36 @@ fnm install --lts || warn "fnm install failed"
 fnm use lts-latest || warn "fnm use failed"
 success "fnm configured"
 
-# PHP extensions
-step "Installing PHP extensions"
-pecl install imagick 2>/dev/null || warn "imagick already installed or failed"
-pecl install memcached 2>/dev/null || warn "memcached already installed or failed"
-pecl install xdebug 2>/dev/null || warn "xdebug already installed or failed"
-pecl install redis 2>/dev/null || warn "redis already installed or failed"
-success "PHP extensions processed"
-
 # Global npm packages
 step "Installing global npm packages"
 npm install -g agent-browser || warn "agent-browser already installed or failed"
 agent-browser install 2>/dev/null || warn "agent-browser setup skipped"
 success "npm packages processed"
 
-# Global Composer packages
-step "Installing global Composer packages"
-composer global require laravel/pint || warn "pint already installed or failed"
-composer global require laravel/envoy || warn "envoy already installed or failed"
-composer global require spatie/phpunit-watcher || warn "phpunit-watcher already installed or failed"
-success "Composer packages processed"
+# PHP development extras (extensions + global Composer packages)
+echo ""
+read -p "Install PHP extensions and global Composer packages? (y/n) " -n 1 -r
+echo ""
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    step "Installing PHP extensions"
+    pecl install imagick 2>/dev/null || warn "imagick already installed or failed"
+    pecl install memcached 2>/dev/null || warn "memcached already installed or failed"
+    pecl install xdebug 2>/dev/null || warn "xdebug already installed or failed"
+    pecl install redis 2>/dev/null || warn "redis already installed or failed"
+    success "PHP extensions processed"
+
+    step "Installing global Composer packages"
+    composer global require laravel/pint || warn "pint already installed or failed"
+    composer global require laravel/envoy || warn "envoy already installed or failed"
+    composer global require laravel/installer || warn "installer already installed or failed"
+    composer global require spatie/phpunit-watcher || warn "phpunit-watcher already installed or failed"
+    success "Composer packages processed"
+else
+    warn "Skipping PHP extensions and Composer packages"
+fi
+
+# Optional: Laravel Valet for local development (alternative or alongside ddev)
+# composer global require laravel/valet && valet install
 
 # DDEV SSH commit signing
 step "Configuring DDEV SSH commit signing"

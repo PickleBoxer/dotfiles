@@ -61,6 +61,7 @@ bin/install
 - **Composer** - Dependency manager via Homebrew
 - **Node.js** - LTS version managed via fnm
 - **DDEV** - Local development environment (Docker-based, used for all projects)
+- **Laravel Valet** - Lightweight alternative for local development (optional, see below)
 
 ### QuickLook Plugins
 
@@ -74,17 +75,17 @@ Instant file previews in Finder: code files, markdown, JSON, CSV, patches, and a
 
 The installation creates symlinks from your home directory to the dotfiles repository. This allows you to version control your configuration while keeping files in their expected locations.
 
-| Symlink Location | Points To | Purpose |
-|-----------------|-----------|---------|
-| `~/.zshrc` | `~/.dotfiles/home/.zshrc` | Main Zsh configuration (Starship prompt, no Oh My Zsh) |
-| `~/.gitconfig` | `~/.dotfiles/home/.gitconfig` | Git configuration with delta diff viewer |
-| `~/.global-gitignore` | `~/.dotfiles/home/.global-gitignore` | Global Git ignore patterns |
-| `~/.mackup.cfg` | `~/.dotfiles/macos/.mackup.cfg` | Mackup backup configuration |
-| `~/.claude/skills` | `~/.dotfiles/config/claude/skills/` | All Claude Code skills (version-controlled) |
-| `~/.claude/agents` | `~/.dotfiles/config/claude/agents/` | All Claude Code agents (version-controlled) |
-| `~/.claude/CLAUDE.md` | `~/.dotfiles/config/claude/CLAUDE.md` | Claude Code configuration |
-| `~/.claude/laravel-php-guidelines.md` | `~/.dotfiles/config/claude/laravel-php-guidelines.md` | Laravel coding standards |
-| `~/.claude/settings.json` | `~/.dotfiles/config/claude/settings.json` | Claude Code settings |
+| Symlink Location                      | Points To                                             | Purpose                                                |
+| ------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------ |
+| `~/.zshrc`                            | `~/.dotfiles/home/.zshrc`                             | Main Zsh configuration (Starship prompt, no Oh My Zsh) |
+| `~/.gitconfig`                        | `~/.dotfiles/home/.gitconfig`                         | Git configuration with delta diff viewer               |
+| `~/.global-gitignore`                 | `~/.dotfiles/home/.global-gitignore`                  | Global Git ignore patterns                             |
+| `~/.mackup.cfg`                       | `~/.dotfiles/macos/.mackup.cfg`                       | Mackup backup configuration                            |
+| `~/.claude/skills`                    | `~/.dotfiles/config/claude/skills/`                   | All Claude Code skills (version-controlled)            |
+| `~/.claude/agents`                    | `~/.dotfiles/config/claude/agents/`                   | All Claude Code agents (version-controlled)            |
+| `~/.claude/CLAUDE.md`                 | `~/.dotfiles/config/claude/CLAUDE.md`                 | Claude Code configuration                              |
+| `~/.claude/laravel-php-guidelines.md` | `~/.dotfiles/config/claude/laravel-php-guidelines.md` | Laravel coding standards                               |
+| `~/.claude/settings.json`             | `~/.dotfiles/config/claude/settings.json`             | Claude Code settings                                   |
 
 ### Sourced Files
 
@@ -99,12 +100,14 @@ These files are loaded by `.zshrc` but remain in the dotfiles directory:
 The prompt is configured in `config/starship.toml` and uses a Powerline-style agnoster look:
 
 **Features:**
+
 - Powerline arrows for segment separators
 - Git branch and status indicators
 - Error color on non-zero exit codes
 - Requires Nerd Font with powerline glyphs
 
 **Git Status Symbols:**
+
 - `!` - Modified files
 - `+` - Staged changes
 - `?` - Untracked files
@@ -114,10 +117,10 @@ The prompt is configured in `config/starship.toml` and uses a Powerline-style ag
 
 Both shell configs are kept for easy switching:
 
-| File | Description |
-|------|-------------|
-| `home/.zshrc` | **Active** — Starship prompt, no Oh My Zsh overhead |
-| `home/.zshrc.ohmyzsh` | Backup — Oh My Zsh with custom agnoster theme |
+| File                  | Description                                         |
+| --------------------- | --------------------------------------------------- |
+| `home/.zshrc`         | **Active** — Starship prompt, no Oh My Zsh overhead |
+| `home/.zshrc.ohmyzsh` | Backup — Oh My Zsh with custom agnoster theme       |
 
 To switch back to Oh My Zsh:
 
@@ -195,6 +198,19 @@ brew upgrade php      # Update PHP to latest
 brew upgrade composer # Update Composer
 ```
 
+### Local Development: DDEV vs Valet
+
+This setup uses **DDEV** (Docker-based) as the primary local development environment. It manages PHP versions, databases, and services per-project with zero global config.
+
+**Laravel Valet** is available as a lightweight alternative — faster to start, no Docker required, but shares a single global PHP version. To install:
+
+```bash
+composer global require laravel/valet
+valet install
+```
+
+Both can coexist. DDEV is preferred for projects that need specific PHP versions or services (MySQL, Redis, etc.).
+
 ---
 
 ## Package Management
@@ -258,11 +274,13 @@ curl -fsSL https://raw.githubusercontent.com/PickleBoxer/dotfiles/main/bin/insta
 All skills are stored in `config/claude/skills/` and version-controlled with your dotfiles. When you run the installer on a new Mac, all skills are immediately available.
 
 **Custom Skills:**
+
 - `ray-skill` - Ray debugging integration
 - `fix-github-issue` - GitHub issue automation
 - `convert-issue-to-discussion` - GitHub workflow helpers
 
 **Community Skills:**
+
 - `vercel-labs/agent-skills` - Web design guidelines and React best practices
 - `anthropics/skills` - Frontend design and skill creation tools
 - `vercel-labs/agent-browser` - Browser automation
@@ -296,6 +314,7 @@ Browse more skills at [skills.sh](https://skills.sh)
 All custom agents are stored in `config/claude/agents/` and version-controlled with your dotfiles. When you run the installer on a new Mac, all agents are immediately available.
 
 **Custom Agents:**
+
 - `laravel-simplifier` - Simplifies and refines PHP/Laravel code for clarity and maintainability
 - `laravel-debugger` - Diagnoses and fixes issues in Laravel applications
 - `laravel-feature-builder` - Implements new features in Laravel applications
@@ -340,16 +359,16 @@ Variables load when you enter the directory and unload when you leave.
 
 ## Tool Comparisons
 
-| Old Tool | New Tool | Why Better |
-|----------|----------|------------|
-| z.sh / autojump | zoxide | Smarter frecency algorithm, Rust speed |
-| nvm | fnm | 40x faster, simpler, Rust-based |
-| cat | bat | Syntax highlighting, git integration |
-| ls | eza | Icons, tree view, git status |
-| grep | ripgrep | 5-10x faster, respects .gitignore |
-| find | fd | Simpler syntax, 10x faster |
-| diff | delta | Side-by-side diffs, syntax highlighting |
-| htop | bottom | Better UI, graphs, Rust-based |
+| Old Tool        | New Tool | Why Better                              |
+| --------------- | -------- | --------------------------------------- |
+| z.sh / autojump | zoxide   | Smarter frecency algorithm, Rust speed  |
+| nvm             | fnm      | 40x faster, simpler, Rust-based         |
+| cat             | bat      | Syntax highlighting, git integration    |
+| ls              | eza      | Icons, tree view, git status            |
+| grep            | ripgrep  | 5-10x faster, respects .gitignore       |
+| find            | fd       | Simpler syntax, 10x faster              |
+| diff            | delta    | Side-by-side diffs, syntax highlighting |
+| htop            | bottom   | Better UI, graphs, Rust-based           |
 
 ---
 

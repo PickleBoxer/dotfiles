@@ -218,8 +218,8 @@ step "Configuring Dock"
 # Prevent applications from bouncing in Dock
 defaults write com.apple.dock no-bouncing -bool true
 
-# Set the icon size of Dock items to 72 pixels
-defaults write com.apple.dock tilesize -int 72
+# Set the icon size of Dock items to 49 pixels
+defaults write com.apple.dock tilesize -int 49
 
 # Hide indicator lights for open applications in the Dock
 defaults write com.apple.dock show-process-indicators -bool false
@@ -268,8 +268,8 @@ defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
 # Visualize CPU usage in the Activity Monitor Dock icon
 defaults write com.apple.ActivityMonitor IconType -int 5
 
-# Show all processes in Activity Monitor
-defaults write com.apple.ActivityMonitor ShowCategory -int 0
+# Show all processes, hierarchically in Activity Monitor
+defaults write com.apple.ActivityMonitor ShowCategory -int 100
 
 # Sort Activity Monitor results by CPU usage
 defaults write com.apple.ActivityMonitor SortColumn -string "CPUUsage"
