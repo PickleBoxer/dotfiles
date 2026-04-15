@@ -1,5 +1,6 @@
-
+# This is the configuration file for Ghostty.
 theme = dark-2026
 font-family = JetBrainsMono Nerd Font
 font-size = 12
+font-thicken = true
 working-directory = /Users/maticvertacnik/dev/code

@@ -42,6 +42,7 @@ cask "vlc"
 
 # Zsh
 brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
 
 # Modern CLI tools
 brew "starship"

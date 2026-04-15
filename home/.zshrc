@@ -112,3 +112,8 @@ fi
 if [ -f $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
     source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
+
+# zsh-syntax-highlighting (installed via brew) - must be last
+if [ -f $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+    source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
