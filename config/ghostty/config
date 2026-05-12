@@ -4,3 +4,6 @@ font-family = JetBrainsMono Nerd Font
 font-size = 12
 font-thicken = true
 working-directory = /Users/maticvertacnik/dev/code
+unfocused-split-opacity = 0.55
+unfocused-split-fill = #7a7a7a
+split-divider-color = #000000
