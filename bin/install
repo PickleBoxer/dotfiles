@@ -129,7 +129,17 @@ else
 fi
 
 # Optional: Laravel Valet for local development (alternative or alongside ddev)
-# composer global require laravel/valet && valet install
+echo ""
+read -p "Install Laravel Valet? (y/n) " -n 1 -r
+echo ""
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    step "Installing Laravel Valet"
+    composer global require laravel/valet || warn "valet already installed or failed"
+    valet install || warn "valet install failed"
+    success "Laravel Valet installed"
+else
+    warn "Skipping Laravel Valet"
+fi
 
 # DDEV SSH commit signing
 step "Configuring DDEV SSH commit signing"
