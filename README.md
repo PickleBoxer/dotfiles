@@ -2,6 +2,8 @@
 
 ![Terminal](images/terminal.jpeg)
 
+[![skills.sh](https://skills.sh/b/PickleBoxer/dotfiles)](https://skills.sh/PickleBoxer/dotfiles)
+
 Personal dotfiles with modern shell tooling, optimized for Laravel/PHP development. Features fast startup times, smart directory navigation, and modern CLI tools.
 
 ## Key Features
