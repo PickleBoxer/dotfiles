@@ -2,6 +2,10 @@
   "env": {
     "CLAUDE_CODE_NO_FLICKER": "1"
   },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Skill(ray-skill:*)",
@@ -58,6 +62,7 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "sonnet",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
