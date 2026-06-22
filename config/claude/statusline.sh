@@ -8,6 +8,7 @@ cwd=$(echo "$input" | jq -r '.workspace.current_dir')
 model=$(echo "$input" | jq -r '.model.display_name')
 ctx_raw=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
 repo=$(echo "$input" | jq -r '.workspace.repo | if . then .owner + "/" + .name else empty end')
+five_hour_pct=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
 
 # Format context percentage
 if [ -n "$ctx_raw" ]; then
@@ -29,40 +30,62 @@ git_branch=$(git -C "$cwd" --no-optional-locks symbolic-ref --short HEAD 2>/dev/
   || git -C "$cwd" --no-optional-locks rev-parse --short HEAD 2>/dev/null \
   || echo "$input" | jq -r '.worktree.branch // empty')
 
-# Build location segment: prefer repo owner/name, fall back to basename of cwd
-if [ -n "$repo" ]; then
-  location="$repo"
+# Build git repo info segment (colored cyan)
+if [ -n "$repo" ] && [ -n "$git_branch" ]; then
+  git_part=$(printf ' \033[01;36m%s\033[00m \033[00;37m(%s)\033[00m' "$repo" "$git_branch")
+elif [ -n "$repo" ]; then
+  git_part=$(printf ' \033[01;36m%s\033[00m' "$repo")
 elif [ -n "$git_branch" ]; then
-  location=$(basename "$cwd")
+  git_part=$(printf ' \033[00;37m(%s)\033[00m' "$git_branch")
 else
-  location="$cwd"
+  git_part=""
 fi
 
-# Model label (shortened for brevity)
+# Model label
 model_part=$(printf '\033[00;35m%s\033[00m' "$model")
 
-# context-mode segment: prefer the globally installed `context-mode` binary; if it is
-# not on PATH (the status line may run with a minimal env), fall back to the plugin's
-# CLI bundle, resolving the latest version so it survives upgrades. Feed it the same JSON.
-cm_part=""
-cm_status=""
-cm_bin=$(command -v context-mode 2>/dev/null || ls "$HOME"/.npm-packages/bin/context-mode 2>/dev/null | head -1)
-if [ -n "$cm_bin" ]; then
-  cm_status=$(printf '%s' "$input" | "$cm_bin" statusline 2>/dev/null)
-fi
-if [ -z "$cm_status" ]; then
-  cm_cli=$(ls -d "$HOME"/.claude/plugins/cache/context-mode/context-mode/*/cli.bundle.mjs 2>/dev/null | sort -V | tail -1)
-  if [ -n "$cm_cli" ] && command -v node >/dev/null 2>&1; then
-    cm_status=$(printf '%s' "$input" | node "$cm_cli" statusline 2>/dev/null)
-  fi
-fi
-[ -n "$cm_status" ] && cm_part=$(printf ' | %s' "$cm_status")
+# ── 5-hour rate limit bar: RGB gradient, full blocks only ──
+BAR_WIDTH=20
+RESET=$'\033[0m'
+rgb() { printf '\033[38;2;%d;%d;%dm' "$1" "$2" "$3"; }
 
-# Assemble output
-if [ -n "$git_branch" ]; then
-  printf '%s \033[01;36m%s\033[00m \033[00;37m(%s)\033[00m%s%s' \
-    "$model_part" "$location" "$git_branch" "$ctx_part" "$cm_part"
-else
-  printf '%s \033[01;36m%s\033[00m%s%s' \
-    "$model_part" "$location" "$ctx_part" "$cm_part"
+rate_line2=""
+if [ -n "$five_hour_pct" ]; then
+  used_int=$(printf '%.0f' "$five_hour_pct")
+
+  # Round to nearest block
+  filled=$(( (used_int * BAR_WIDTH + 50) / 100 ))
+
+  bar=""
+  for (( i=0; i<BAR_WIDTH; i++ )); do
+    pos=$(( i * 100 / (BAR_WIDTH - 1) ))
+
+    if [ "$pos" -le 50 ]; then
+      r=$(( 0 + 220 * pos / 50 ))
+      g=200
+      b=$(( 80 - 80 * pos / 50 ))
+    else
+      adj=$(( pos - 50 ))
+      r=220
+      g=$(( 200 - 160 * adj / 50 ))
+      b=$(( 0 + 20 * adj / 50 ))
+    fi
+
+    if [ "$i" -lt "$filled" ]; then
+      bar="${bar}$(rgb $r $g $b)█"
+    else
+      bar="${bar}${RESET}░"
+    fi
+  done
+  bar="${bar}${RESET}"
+
+  rate_line2=$(printf '5h: %s %s%%' "$bar" "$used_int")
+fi
+
+# Line 1: model | git repo info | context used
+printf '%s%s%s' "$model_part" "$git_part" "$ctx_part"
+
+# Line 2: rate limit bar (only when data is available)
+if [ -n "$rate_line2" ]; then
+  printf '\n%s' "$rate_line2"
 fi

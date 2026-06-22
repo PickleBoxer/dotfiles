@@ -26,6 +26,7 @@ tap "nicoverbruggen/cask"
 tap "shivammathur/php"
 tap "shivammathur/extensions"
 cask "phpmon"
+brew "stats"
 
 # Apps
 cask "google-chrome"
