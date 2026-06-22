@@ -101,10 +101,9 @@ fnm use lts-latest || warn "fnm use failed"
 success "fnm configured"
 
 # Global npm packages
-# step "Installing global npm packages"
-# npm install -g agent-browser || warn "agent-browser already installed or failed"
-# agent-browser install 2>/dev/null || warn "agent-browser setup skipped"
-# success "npm packages processed"
+step "Installing global npm packages"
+npm install -g intelephense || warn "intelephense already installed or failed"
+success "npm packages processed"
 
 # PHP development extras (extensions + global Composer packages)
 echo ""
