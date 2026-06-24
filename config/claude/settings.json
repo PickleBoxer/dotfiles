@@ -129,6 +129,5 @@
   "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": false,
-  "skipAutoPermissionPrompt": true,
-  "model": "opus[1m]"
+  "skipAutoPermissionPrompt": true
 }

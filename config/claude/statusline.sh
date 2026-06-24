@@ -9,6 +9,7 @@ model=$(echo "$input" | jq -r '.model.display_name')
 ctx_raw=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
 repo=$(echo "$input" | jq -r '.workspace.repo | if . then .owner + "/" + .name else empty end')
 five_hour_pct=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
+five_hour_resets=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
 
 # Format context percentage
 if [ -n "$ctx_raw" ]; then
@@ -79,7 +80,25 @@ if [ -n "$five_hour_pct" ]; then
   done
   bar="${bar}${RESET}"
 
-  rate_line2=$(printf '5h: %s %s%%' "$bar" "$used_int")
+  reset_part=""
+  if [ -n "$five_hour_resets" ]; then
+    now=$(date +%s)
+    diff=$(( five_hour_resets - now ))
+    if [ "$diff" -gt 0 ]; then
+      mins=$(( diff / 60 ))
+      hrs=$(( mins / 60 ))
+      rem=$(( mins % 60 ))
+      if [ "$hrs" -gt 0 ]; then
+        reset_part=$(printf ' (resets in %dh %dm)' "$hrs" "$rem")
+      else
+        reset_part=$(printf ' (resets in %dm)' "$mins")
+      fi
+    else
+      reset_part=" (resetting...)"
+    fi
+  fi
+
+  rate_line2=$(printf '5h: %s %s%%%s' "$bar" "$used_int" "$reset_part")
 fi
 
 # Line 1: model | git repo info | context used
