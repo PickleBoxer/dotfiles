@@ -27,6 +27,7 @@ tap "shivammathur/php"
 tap "shivammathur/extensions"
 cask "phpmon"
 brew "stats"
+brew "oven-sh/bun/bun"
 
 # Apps
 cask "google-chrome"
