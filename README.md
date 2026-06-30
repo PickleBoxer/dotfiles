@@ -311,7 +311,6 @@ All skills are stored in `config/claude/skills/` and version-controlled with you
 
 - `ray-skill` - Ray debugging integration
 - `fix-github-issue` - GitHub issue automation
-- `convert-issue-to-discussion` - GitHub workflow helpers
 
 **Community Skills:**
 

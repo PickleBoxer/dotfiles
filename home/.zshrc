@@ -120,3 +120,6 @@ fi
 
 fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
 autoload -Uz compinit && compinit
+
+# Added by codebase-memory-mcp install
+export PATH="/Users/maticvertacnik/.local/bin:$PATH"

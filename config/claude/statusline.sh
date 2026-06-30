@@ -45,40 +45,17 @@ fi
 # Model label
 model_part=$(printf '\033[00;35m%s\033[00m' "$model")
 
-# ── 5-hour rate limit bar: RGB gradient, full blocks only ──
-BAR_WIDTH=20
-RESET=$'\033[0m'
-rgb() { printf '\033[38;2;%d;%d;%dm' "$1" "$2" "$3"; }
-
-rate_line2=""
+# Format 5-hour rate limit percentage
+five_hour_part=""
 if [ -n "$five_hour_pct" ]; then
   used_int=$(printf '%.0f' "$five_hour_pct")
-
-  # Round to nearest block
-  filled=$(( (used_int * BAR_WIDTH + 50) / 100 ))
-
-  bar=""
-  for (( i=0; i<BAR_WIDTH; i++ )); do
-    pos=$(( i * 100 / (BAR_WIDTH - 1) ))
-
-    if [ "$pos" -le 50 ]; then
-      r=$(( 0 + 220 * pos / 50 ))
-      g=200
-      b=$(( 80 - 80 * pos / 50 ))
-    else
-      adj=$(( pos - 50 ))
-      r=220
-      g=$(( 200 - 160 * adj / 50 ))
-      b=$(( 0 + 20 * adj / 50 ))
-    fi
-
-    if [ "$i" -lt "$filled" ]; then
-      bar="${bar}$(rgb $r $g $b)█"
-    else
-      bar="${bar}${RESET}░"
-    fi
-  done
-  bar="${bar}${RESET}"
+  if [ "$used_int" -ge 60 ]; then
+    rate_color='\033[01;31m' # red
+  elif [ "$used_int" -ge 40 ]; then
+    rate_color='\033[01;33m' # yellow
+  else
+    rate_color='\033[01;32m' # green
+  fi
 
   reset_part=""
   if [ -n "$five_hour_resets" ]; then
@@ -89,22 +66,17 @@ if [ -n "$five_hour_pct" ]; then
       hrs=$(( mins / 60 ))
       rem=$(( mins % 60 ))
       if [ "$hrs" -gt 0 ]; then
-        reset_part=$(printf ' (resets in %dh %dm)' "$hrs" "$rem")
+        reset_part=$(printf ' resets in %dh %dm' "$hrs" "$rem")
       else
-        reset_part=$(printf ' (resets in %dm)' "$mins")
+        reset_part=$(printf ' resets in %dm' "$mins")
       fi
     else
-      reset_part=" (resetting...)"
+      reset_part=" resetting..."
     fi
   fi
 
-  rate_line2=$(printf '5h: %s %s%%%s' "$bar" "$used_int" "$reset_part")
+  five_hour_part=$(printf ' | 5h: %b%s%%\033[00m%s' "$rate_color" "$used_int" "$reset_part")
 fi
 
-# Line 1: model | git repo info | context used
-printf '%s%s%s' "$model_part" "$git_part" "$ctx_part"
-
-# Line 2: rate limit bar (only when data is available)
-if [ -n "$rate_line2" ]; then
-  printf '\n%s' "$rate_line2"
-fi
+# Single line: model | git repo info | context used | 5h rate limit
+printf '%s%s%s%s' "$model_part" "$git_part" "$ctx_part" "$five_hour_part"
