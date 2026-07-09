@@ -108,12 +108,6 @@
       }
     }
   },
-  "spinnerVerbs": {
-    "mode": "replace",
-    "verbs": [
-      "Thinking"
-    ]
-  },
   "alwaysThinkingEnabled": true,
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark",
