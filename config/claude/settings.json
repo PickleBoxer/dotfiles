@@ -87,7 +87,6 @@
   },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": false,
     "context7@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
@@ -99,14 +98,6 @@
     "claude-code-setup@claude-plugins-official": true,
     "php-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true
-  },
-  "extraKnownMarketplaces": {
-    "superpowers-marketplace": {
-      "source": {
-        "source": "github",
-        "repo": "obra/superpowers-marketplace"
-      }
-    }
   },
   "alwaysThinkingEnabled": true,
   "skipDangerousModePermissionPrompt": true,
