@@ -102,6 +102,7 @@
   "alwaysThinkingEnabled": true,
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark",
+  "verbose": true,
   "switchModelsOnFlag": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": false,

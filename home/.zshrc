@@ -1,6 +1,12 @@
 # Modern Zsh configuration without Oh My Zsh
 # Much faster startup time
 
+# Homebrew (must come first: sets PATH/MANPATH/INFOPATH so brew-installed
+# tools are found ahead of /usr/bin, and adds both bin/ and sbin/)
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
 # Options
 setopt AUTO_CD              # cd by just typing directory name
 setopt AUTO_PUSHD           # Make cd push old dir to dirstack
@@ -73,7 +79,7 @@ export PATH="$HOME/.composer/vendor/bin:$PATH"
 export PATH=/usr/local/bin:$PATH
 export PATH="$HOME/.yarn/bin:$PATH"
 export PATH=$HOME/bin:~/.config/phpmon/bin:$PATH
-export JAVA_HOME="$(brew --prefix)/opt/openjdk@17"
+export JAVA_HOME="$(/usr/libexec/java_home -v 25 2>/dev/null)"
 export ANDROID_HOME="$HOME/Library/Android/sdk"
 export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
