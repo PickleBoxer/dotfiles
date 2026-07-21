@@ -69,7 +69,6 @@ brew "gnu-sed"
 brew "bash"
 
 # Development tools
-cask "claude-code"
 brew "mkcert"
 brew "php@8.4"
 cask "temurin@25"
