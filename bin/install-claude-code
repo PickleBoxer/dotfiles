@@ -23,18 +23,14 @@ echo "========================"
 echo ""
 
 # Install Claude Code
+# Always use the native installer (curl) so there's only ever one installation.
+# Do NOT install via `brew install --cask claude-code` - that installs a second,
+# independently-updating copy that conflicts with the native one on PATH.
 step "Installing Claude Code CLI"
 if command -v claude &>/dev/null; then
     warn "Claude Code already installed"
 else
-    # Try Homebrew first (modern)
-    if command -v brew &>/dev/null; then
-        brew install --cask claude-code || warn "Claude Code installation failed"
-    else
-        # Fallback to curl installer
-        warn "Homebrew not found, using curl installer"
-        curl -fsSL https://claude.ai/install.sh | bash || warn "Claude Code installation failed"
-    fi
+    curl -fsSL https://claude.ai/install.sh | bash || warn "Claude Code installation failed"
 fi
 success "Claude Code processed"
 
@@ -84,7 +80,7 @@ echo ""
 step "Next steps:"
 if [ ! -d "$DOTFILES_DIR/config/claude" ]; then
     echo "  • Clone dotfiles for custom configuration:"
-    echo "    git clone https://github.com/freekmurze/dotfiles.git ~/.dotfiles"
+    echo "    git clone https://github.com/PickleBoxer/dotfiles.git ~/.dotfiles"
     echo "    ~/.dotfiles/bin/install-claude-code"
     echo ""
 fi
