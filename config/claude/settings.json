@@ -72,7 +72,9 @@
       "ScheduleWakeup",
       "CronCreate",
       "CronDelete",
-      "CronList"
+      "CronList",
+      "Bash(git commit)",
+      "Bash(git commit *)"
     ],
     "defaultMode": "auto"
   },
@@ -110,12 +112,12 @@
     }
   },
   "alwaysThinkingEnabled": true,
+  "autoMemoryEnabled": true,
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark",
   "verbose": true,
   "switchModelsOnFlag": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": false,
-  "skipAutoPermissionPrompt": true,
-  "autoMemoryEnabled": true
+  "skipAutoPermissionPrompt": true
 }
