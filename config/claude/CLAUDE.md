@@ -21,5 +21,6 @@ When working with Laravel/PHP projects, always use the php-guidelines-from-spati
 ## Using GitHub
 
 For questions about GitHub, use the gh tool
+Follow the commit conventions in `config/claude/rules/commit-conventions.md` when drafting commit messages
 Never mention Claude Code in PR descriptions, PR comments, or issue comments
 Do not include a "Test plan" section in PR descriptions

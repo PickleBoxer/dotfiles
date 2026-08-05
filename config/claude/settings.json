@@ -109,6 +109,30 @@
         "repo": "mattpocock/skills"
       },
       "autoUpdate": true
+    },
+    "swift-architecture-skill": {
+      "source": {
+        "source": "github",
+        "repo": "efremidze/swift-architecture-skill"
+      }
+    },
+    "swift-concurrency-agent-skill": {
+      "source": {
+        "source": "github",
+        "repo": "twostraws/Swift-Concurrency-Agent-Skill"
+      }
+    },
+    "swiftui-agent-skill": {
+      "source": {
+        "source": "github",
+        "repo": "twostraws/SwiftUI-Agent-Skill"
+      }
+    },
+    "swift-testing-agent-skill": {
+      "source": {
+        "source": "github",
+        "repo": "twostraws/Swift-Testing-Agent-Skill"
+      }
     }
   },
   "alwaysThinkingEnabled": true,
