@@ -100,16 +100,9 @@
     "claude-code-setup@claude-plugins-official": true,
     "php-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
-    "mattpocock-skills@mattpocock": true
+    "mattpocock-skills@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
-    "mattpocock": {
-      "source": {
-        "source": "github",
-        "repo": "mattpocock/skills"
-      },
-      "autoUpdate": true
-    },
     "swift-architecture-skill": {
       "source": {
         "source": "github",
