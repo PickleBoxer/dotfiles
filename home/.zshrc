@@ -126,3 +126,6 @@ fi
 
 fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
 autoload -Uz compinit && compinit
+
+# sentry
+fpath=("/Users/maticvertacnik/.local/share/zsh/site-functions" $fpath)
