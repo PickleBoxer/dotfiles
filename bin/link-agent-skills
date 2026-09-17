@@ -1,0 +1,81 @@
+#!/bin/bash
+# Share standalone skills from dotfiles with Codex through its user skill path.
+# Claude Code links the whole source directory; Codex gets individual symlinks.
+
+set -euo pipefail
+
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
+AGENT_CONFIG_HOME="${AGENT_CONFIG_HOME:-$HOME}"
+SOURCE="$DOTFILES_DIR/config/claude/skills"
+SHARED_SKILLS="$AGENT_CONFIG_HOME/.agents/skills"
+CODEX_DIR="${CODEX_HOME:-$AGENT_CONFIG_HOME/.codex}"
+BACKUP_DIR=""
+
+# Preserve existing installations outside skill discovery before linking them.
+link_shared() {
+    local source="$1" target="$2"
+    if [ -L "$target" ] && [ "$(readlink "$target")" = "$source" ]; then
+        return
+    fi
+    if [ -e "$target" ] || [ -L "$target" ]; then
+        if [ -z "$BACKUP_DIR" ]; then
+            mkdir -p "$AGENT_CONFIG_HOME/.agents/backups"
+            BACKUP_DIR="$(mktemp -d "$AGENT_CONFIG_HOME/.agents/backups/link-agent-skills.XXXXXX")"
+        fi
+        mv "$target" "$BACKUP_DIR/$(basename "$target")"
+        echo "Preserved $target in $BACKUP_DIR"
+    fi
+    ln -s "$source" "$target"
+}
+
+if [ ! -d "$SOURCE" ]; then
+    echo "No skills directory at $SOURCE" >&2
+    exit 1
+fi
+
+mkdir -p "$SHARED_SKILLS" "$CODEX_DIR"
+
+# Remove only our own links when a source skill is removed or renamed.
+for target in "$SHARED_SKILLS"/*; do
+    [ -L "$target" ] || continue
+    skill="$(basename "$target")"
+    [ "$(readlink "$target")" = "$SOURCE/$skill" ] || continue
+    if [ ! -f "$SOURCE/$skill/SKILL.md" ]; then
+        rm "$target"
+    fi
+done
+
+linked=0
+for entry in "$SOURCE"/*; do
+    [ -f "$entry/SKILL.md" ] || continue
+    skill="$(basename "$entry")"
+    case "$skill" in
+        # These depend on Claude-specific MCP tooling or plugin execution setup.
+        ui|typefully) continue ;;
+    esac
+    link_shared "$entry" "$SHARED_SKILLS/$skill"
+    linked=$((linked + 1))
+
+    # Migrate only links created by the old installer. Leave other skills alone.
+    legacy="$CODEX_DIR/skills/$skill"
+    if [ -L "$legacy" ] && [ "$(readlink "$legacy")" = "$entry" ]; then
+        rm "$legacy"
+    fi
+done
+
+echo "Linked $linked shared skills into $SHARED_SKILLS"
+
+if [ -f "$DOTFILES_DIR/config/claude/AGENTS.md" ]; then
+    link_shared "$DOTFILES_DIR/config/claude/AGENTS.md" "$CODEX_DIR/AGENTS.md"
+    echo "Linked shared AGENTS.md into $CODEX_DIR"
+fi
+
+# Use an existing agent-browser installation, or link the newest Claude plugin.
+if [ ! -e "$SHARED_SKILLS/agent-browser" ]; then
+    AGENT_BROWSER="$(ls -td "$AGENT_CONFIG_HOME"/.claude/plugins/cache/agent-browser/agent-browser/*/skills/agent-browser 2>/dev/null | head -1 || true)"
+    if [ -n "$AGENT_BROWSER" ]; then
+        link_shared "$AGENT_BROWSER" "$SHARED_SKILLS/agent-browser"
+    else
+        echo "agent-browser is not installed; install it separately if needed"
+    fi
+fi

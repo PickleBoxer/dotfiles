@@ -39,7 +39,7 @@ DOTFILES_DIR="$HOME/.dotfiles"
 if [ ! -d "$DOTFILES_DIR" ]; then
     # Try to detect if script is in a dotfiles directory
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    if [ -f "$SCRIPT_DIR/../config/claude/CLAUDE.md" ]; then
+    if [ -f "$SCRIPT_DIR/../config/claude/AGENTS.md" ]; then
         DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
     fi
 fi
@@ -50,8 +50,9 @@ if [ -d "$DOTFILES_DIR/config/claude" ]; then
     mkdir -p ~/.claude
 
     # Symlink configuration files
-    ln -sf "$DOTFILES_DIR/config/claude/CLAUDE.md" ~/.claude/CLAUDE.md
-    ln -sf "$DOTFILES_DIR/config/claude/laravel-php-guidelines.md" ~/.claude/laravel-php-guidelines.md
+    # Claude Code reads CLAUDE.md, not AGENTS.md, so it gets a symlink under the
+    # name it expects. Codex reads AGENTS.md directly. One file, both harnesses.
+    ln -sf "$DOTFILES_DIR/config/claude/AGENTS.md" ~/.claude/CLAUDE.md
     ln -sf "$DOTFILES_DIR/config/claude/settings.json" ~/.claude/settings.json
     ln -sf "$DOTFILES_DIR/config/claude/statusline.sh" ~/.claude/statusline.sh
 
@@ -66,6 +67,15 @@ if [ -d "$DOTFILES_DIR/config/claude" ]; then
     # Symlink entire rules directory
     rm -rf ~/.claude/rules
     ln -sf "$DOTFILES_DIR/config/claude/rules" ~/.claude/rules
+
+    # Share the harness-neutral skills with Codex and any other SKILL.md reader.
+    if [ -x "$DOTFILES_DIR/bin/link-agent-skills" ]; then
+        DOTFILES_DIR="$DOTFILES_DIR" "$DOTFILES_DIR/bin/link-agent-skills"
+    fi
+
+    if [ -x "$DOTFILES_DIR/bin/install-agent-skill-sync" ]; then
+        DOTFILES_DIR="$DOTFILES_DIR" "$DOTFILES_DIR/bin/install-agent-skill-sync"
+    fi
 
     success "Claude Code configured"
 else

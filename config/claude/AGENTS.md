@@ -18,7 +18,11 @@ Answer succinctly. Skip preamble, recaps, and narration of what you're about to 
 
 ## Coding Standards
 
-When working with Laravel/PHP projects, always use the php-guidelines-from-spatie skill
+When working with Laravel/PHP projects, always use the spatie-guidelines skill
+
+## Writing
+
+Never use em dashes (—) or en dashes (–) as punctuation. Rephrase with periods, commas, or parentheses. Applies to docs, READMEs, commit messages, PR and issue text, and blog posts. Hyphens in compound words are fine.
 
 ## Using GitHub
 

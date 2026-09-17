@@ -86,8 +86,7 @@ The installation creates symlinks from your home directory to the dotfiles repos
 | `~/.claude/skills`                    | `~/.dotfiles/config/claude/skills/`                   | All Claude Code skills (version-controlled)            |
 | `~/.claude/agents`                    | `~/.dotfiles/config/claude/agents/`                   | All Claude Code agents (version-controlled)            |
 | `~/.claude/rules`                     | `~/.dotfiles/config/claude/rules/`                    | All Claude Code rules (version-controlled)              |
-| `~/.claude/CLAUDE.md`                 | `~/.dotfiles/config/claude/CLAUDE.md`                 | Claude Code configuration                              |
-| `~/.claude/laravel-php-guidelines.md` | `~/.dotfiles/config/claude/laravel-php-guidelines.md` | Laravel coding standards                               |
+| `~/.claude/CLAUDE.md`                 | `~/.dotfiles/config/claude/AGENTS.md`                 | Claude Code configuration (shared with Codex as AGENTS.md) |
 | `~/.claude/settings.json`             | `~/.dotfiles/config/claude/settings.json`             | Claude Code settings                                   |
 
 ### Sourced Files
@@ -300,7 +299,7 @@ curl -fsSL https://raw.githubusercontent.com/PickleBoxer/dotfiles/main/bin/insta
 ### What's Included
 
 - **Claude Code CLI** - Installed via Homebrew
-- **Custom configuration** - CLAUDE.md with coding guidelines, laravel-php-guidelines.md
+- **Custom configuration** - CLAUDE.md with coding guidelines (shared with Codex as AGENTS.md)
 - **Version-controlled skills** - Entire `~/.claude/skills` directory symlinked to dotfiles
 - **Version-controlled agents** - Entire `~/.claude/agents` directory symlinked to dotfiles
 
