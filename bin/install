@@ -140,6 +140,9 @@ else
     warn "Skipping Laravel Valet"
 fi
 
+# Spotlight exclusions
+bash ~/.dotfiles/bin/exclude-from-spotlight || warn "Spotlight exclusions had issues"
+
 # DDEV SSH commit signing
 step "Configuring DDEV SSH commit signing"
 mkdir -p "$HOME/.ddev/homeadditions/.ssh/config.d"

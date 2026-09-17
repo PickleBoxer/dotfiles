@@ -16,6 +16,7 @@ alias mfs='php artisan migrate:fresh --seed'
 alias nah='git reset --hard;git clean -df'
 
 alias pp="php artisan test --parallel"
+alias pt="./vendor/bin/pest --parallel --tia"
 alias sshconfig="code ~/.ssh/config"
 alias copykey='command cat ~/.ssh/id_ed25519.pub 2>/dev/null || command cat ~/.ssh/id_rsa.pub 2>/dev/null | pbcopy'
 
