@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<link rel="stylesheet" media="(prefers-color-scheme: light)"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" media="(prefers-color-scheme: dark)"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<style>
+  :root {
+    --bg: #fbfaf9; --surface: #fff; --border: #e6e2dd; --text: #1c1a17;
+    --muted: #6b6560; --accent: #8a4b2a; --accent-soft: #f5ece6;
+    --warn-bg: #fdf6e8; --warn-border: #e8c987; --warn-text: #6b4f13;
+    --risk-bg: #fdeeec; --risk-border: #e9b0a6; --risk-text: #7a2d1e;
+    --bug-bg: #fbe9e7; --bug-border: #c0392b; --bug-text: #8c1d12;
+    --add: #1a7f37; --del: #b3261e;
+    --code-bg: #f6f3f0;
+    --link: #8a4b2a;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17161a; --surface: #1f1e23; --border: #34323a; --text: #ece9e6;
+      --muted: #a09a95; --accent: #e0a17a; --accent-soft: #2b2320;
+      --warn-bg: #2a2417; --warn-border: #6b5626; --warn-text: #e8cf9a;
+      --risk-bg: #2c1c19; --risk-border: #7a3d32; --risk-text: #f0b6a8;
+      --bug-bg: #331915; --bug-border: #c0392b; --bug-text: #ffb4a6;
+      --add: #4ac26b; --del: #f0837a;
+      --code-bg: #26252b;
+      --link: #e0a17a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 3rem 1.5rem 6rem;
+    background: var(--bg); color: var(--text);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  main { max-width: 52rem; margin: 0 auto; }
+
+  header { border-bottom: 2px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2.5rem; }
+  h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  .meta { color: var(--muted); font-size: .875rem; font-family: var(--mono); }
+  .meta span + span::before { content: " · "; }
+
+  h2 {
+    font-size: 1.3rem; margin: 3rem 0 1rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border); letter-spacing: -.01em;
+  }
+  h3 { font-size: 1.05rem; margin: 2rem 0 .5rem; }
+  h2:first-of-type { border-top: 0; padding-top: 0; }
+  p, li { margin: 0 0 .9rem; }
+
+  code {
+    font-family: var(--mono); font-size: .875em;
+    background: var(--code-bg); padding: .15em .4em; border-radius: 4px;
+  }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 1rem 1.1rem; overflow-x: auto; margin: 1rem 0;
+  }
+  pre code { background: none; padding: 0; font-size: .82rem; line-height: 1.6; }
+  pre .filename {
+    display: block; color: var(--muted); font-size: .75rem;
+    margin-bottom: .6rem; padding-bottom: .5rem; border-bottom: 1px solid var(--border);
+  }
+  .add { color: var(--add); }
+  .del { color: var(--del); }
+
+  a { color: var(--link); text-decoration-color: color-mix(in srgb, var(--link) 40%, transparent); }
+  a:hover { text-decoration-thickness: 2px; }
+  pre .filename a { color: inherit; }
+
+  /* highlight.js paints the tokens. Keep its background out of the way so the
+     block matches the rest of the page in both themes. */
+  pre code.hljs { background: none; padding: 0; }
+
+  /* Diagrams. Mermaid renders into these; inline SVG works the same way. */
+  pre.mermaid {
+    background: var(--surface); text-align: center; padding: 1.5rem 1rem;
+    border: 1px solid var(--border); border-radius: 8px;
+  }
+  pre.mermaid:not([data-processed]) { color: transparent; }   /* hide source pre-render */
+  svg { max-width: 100%; height: auto; }
+  figure { margin: 1.5rem 0; }
+  figcaption { color: var(--muted); font-size: .8rem; text-align: center; margin-top: .5rem; }
+
+  /* Two things side by side, such as a before and an after. */
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  .cols > * { min-width: 0; margin: 0; }
+  @media (max-width: 46rem) { .cols { grid-template-columns: 1fr; } }
+
+  .note, .risk, .bug {
+    border-left: 3px solid; border-radius: 0 8px 8px 0;
+    padding: .9rem 1.1rem; margin: 1.25rem 0;
+  }
+  .bug {
+    background: var(--bug-bg); border-color: var(--bug-border); color: var(--bug-text);
+    border-left-width: 5px;
+  }
+  .note { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn-text); }
+  .risk { background: var(--risk-bg); border-color: var(--risk-border); color: var(--risk-text); }
+  .note > :last-child, .risk > :last-child, .bug > :last-child { margin-bottom: 0; }
+  .label {
+    display: block; font-size: .7rem; text-transform: uppercase;
+    letter-spacing: .08em; font-weight: 700; margin-bottom: .35rem; opacity: .85;
+  }
+
+  table { border-collapse: collapse; width: 100%; margin: 1.25rem 0; font-size: .9rem; }
+  th, td { text-align: left; padding: .55rem .75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .scroll { overflow-x: auto; }
+
+  footer { margin-top: 4rem; padding-top: 1.25rem; border-top: 1px solid var(--border);
+           color: var(--muted); font-size: .8rem; font-family: var(--mono); }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <h1>{{TITLE}}</h1>
+  <div class="meta">
+    <span>{{REPO}}</span><span>{{BRANCH}}</span><span>{{FILES}} files</span>
+    <span class="add">+{{ADDITIONS}}</span><span class="del">-{{DELETIONS}}</span>
+    <span>{{GENERATED_AT}}</span>
+  </div>
+</header>
+
+<!--
+  Content goes here. The structure below is a starting point, not a template to
+  fill in. Reorganise whenever the change is explained better another way.
+
+  Available building blocks:
+
+    <div class="note"><span class="label">Unclear</span>
+      Say plainly when you could not determine why something was done.
+    </div>
+
+    <div class="risk"><span class="label">Look closely</span>
+      Authorization, money, data loss, migrations, multi-tenancy.
+    </div>
+
+    <div class="bug"><span class="label">This looks wrong</span>
+      Something the explaining actually turned up. Place it inline, next to the
+      code it concerns, never collected in a list at the bottom.
+    </div>
+
+    <pre><code class="language-php"><span class="filename"><a href="https://github.com/OWNER/REPO/blob/SHA/app/Models/Ticket.php#L42-L58">app/Models/Ticket.php:42</a></span>
+public function handle(Ticket $ticket): void
+{
+    // plain code, no manual token markup. highlight.js does the colouring.
+}</code></pre>
+
+    Set the language on the code element: language-php, language-blade,
+    language-ts, language-tsx, language-js, language-json, language-bash,
+    language-sql, language-diff. Use language-diff with real +/- lines when
+    showing a before and after together.
+
+    <figure>
+      <pre class="mermaid">
+sequenceDiagram
+    Caller->>Action: option_ulids
+    Action->>DB: resolve ulids
+    DB-->>Action: ids
+    Action->>Writer: optionIds
+      </pre>
+      <figcaption>Optional caption.</figcaption>
+    </figure>
+
+    <div class="cols"> ... two blocks side by side, such as before and after ... </div>
+
+    Diagrams are encouraged wherever they explain faster than prose. Draw the
+    mechanism this change touches, not a generic architecture picture. Inline
+    SVG works too.
+
+    Link file paths to the pushed commit when the branch is on the remote.
+    Pin to the sha, not the branch name. Never emit a link you have not
+    confirmed resolves.
+
+    <div class="scroll"> ... </div>   wrap wide tables
+-->
+
+{{CONTENT}}
+
+<footer>Generated to help review this branch. This is an explanation, not a review.</footer>
+
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+  mermaid.initialize({ startOnLoad: true, theme: dark ? 'dark' : 'neutral' });
+</script>
+</body>
+</html>
