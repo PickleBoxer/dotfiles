@@ -2,6 +2,10 @@
 name: audit-codebase
 description: Audit the entire codebase for materially useful simplifications in data structures, state representation, control flow, algorithms, and ownership. Runs a read-only, coordinator-led, multi-agent review that inventories every subsystem, reviews each in bounded batches, and validates findings before reporting. Does not edit, commit, or push.
 disable-model-invocation: true
+metadata:
+  version: 1.0.0
+  source:
+    url: https://gist.githubusercontent.com/aarondfrancis/8735edbe48532f97ee5ea818db4dbd47/raw/959a2a9c1ed1648f39872885b2686ce5b576e78c/audit-your-codebase.md
 ---
 
 Audit this entire codebase for materially useful simplifications in its data structures, state representation, control flow, algorithms, and ownership.
@@ -74,7 +78,7 @@ For every recommendation, provide:
 7. Existing and additional validation required.
 8. Confidence: high, medium, or low.
 
-3. Validate and synthesize
+9. Validate and synthesize
 
 The coordinator must independently verify every finding against the current repository before accepting it.
 

@@ -4,7 +4,8 @@
   },
   "attribution": {
     "commit": "",
-    "pr": ""
+    "pr": "",
+    "sessionUrl": false
   },
   "permissions": {
     "allow": [
@@ -22,10 +23,8 @@
       "Bash(git:*)",
       "Bash(php artisan:*)",
       "Bash(npm:*)",
-      "Bash(npx:*)",
       "Bash(yarn:*)",
       "Bash(pnpm:*)",
-      "Bash(php:*)",
       "Bash(docker:*)",
       "Bash(docker-compose:*)",
       "Bash(make:*)",
@@ -40,7 +39,6 @@
       "Bash(cp:*)",
       "Bash(mv:*)",
       "Bash(touch:*)",
-      "Bash(chmod:*)",
       "Bash(pwd:*)",
       "Bash(which:*)",
       "Bash(whoami:*)",
@@ -88,16 +86,15 @@
     "command": "~/.claude/statusline.sh"
   },
   "enabledPlugins": {
-    "frontend-design@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true,
-    "code-review@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": false,
+    "code-simplifier@claude-plugins-official": false,
+    "code-review@claude-plugins-official": false,
+    "skill-creator@claude-plugins-official": false,
+    "claude-md-management@claude-plugins-official": false,
     "security-guidance@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true,
-    "pr-review-toolkit@claude-plugins-official": true,
-    "claude-code-setup@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": false,
+    "pr-review-toolkit@claude-plugins-official": false,
+    "claude-code-setup@claude-plugins-official": false,
     "php-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "mattpocock-skills@claude-plugins-official": true
@@ -128,13 +125,52 @@
       }
     }
   },
+  "feedbackDrafts": "off",
   "alwaysThinkingEnabled": true,
+  "awaySummaryEnabled": false,
   "autoMemoryEnabled": true,
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark",
+  "editorMode": "normal",
   "verbose": true,
   "switchModelsOnFlag": true,
+  "autoContinueAtUsageLimit": false,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": false,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "autoMode": {
+    "soft_deny": [
+      "$defaults",
+      "Bash(*docker-compose*-prod*)",
+      "Bash(*prod_api_test*)",
+      "Bash(*prod-s3-deploy*)"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: workwize (goworkwize) — inferred from repo path and bucket/config naming; no remotes configured on this checkout",
+      "**Cloud provider(s)**: AWS (S3-style bucket names) and Kubernetes (namespace references) — inferred from config scan; not corroborated by transcript-mined bucket usage",
+      "**Repository visibility**: assume private unless the remote host and repo name indicate otherwise, or a visibility check in the transcript shows public — not queryable here (no remotes configured), gh visibility check could not run",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: not queryable here (no remotes configured, gh check unavailable)",
+      "**CI/CD deploy targets**: wize-back and wize-front GitHub Actions workflows reference prod deploy jobs (`prod_api_test.yml`, `prod-s3-deploy.yml`) — treat as sensitive; not independently corroborated by usage transcripts",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine with open internet",
+      "**Source control**: The trusted repo (workwize, local checkout at /Users/maticvertacnik/dev/code/workwize) — no remotes configured, so scope is this local checkout only",
+      "**Trusted internal domains**: goworkwize-dev.eu.auth0.com (seen 3× in this project's transcripts)",
+      "**Trusted cloud buckets**: goworkwize-* prefix (config-derived — not a confirmed upload destination; uploads of local data still require confirmation)",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: .env and .env.* files across wize-back/project, wize-docker, wize-front/app, wize-scripts (including .env.testing.sqlite, portman/.env-portman); infrastructure/eks/manifests/.env; wize-scripts/src/commands/secrets.ts, kandji-credentials.ts, k8s-cp.ts, k8s-php-shell.ts; .scratch/ship-*/issues/*error-classification* and *auth-credential-validation* notes — share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment — includes wize-back/docker/TestProject/docker-compose-prod.yml, wize-front/docker/TestProject/docker-compose-prod.yml, wize-back/.github/workflows/prod_api_test.yml, wize-front/.github/workflows/prod-s3-deploy.yml, and the goworkwize-frontend-prod bucket (config-derived — not a confirmed upload destination; uploads of local data still require confirmation)",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic (k8s namespace `app` seen 4× in this project's transcripts is not itself a prod-marked namespace)",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment — includes infrastructure/eks/manifests/ contents",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development (Laravel/PHP and JS/TS across wize-back, wize-front, wize-scripts, infrastructure)",
+      "**Trusted repo**: The git repository at /Users/maticvertacnik/dev/code/workwize (working directory) — no remotes configured on this checkout, so scope is local only",
+      "**Org-specific CLIs**: ddev (1461× in shell history), fnm, composer, php, npx — used routinely in this project",
+      "routine under /Users/maticvertacnik/dev/code/workwize/ prefix: ddev, composer, php, npx, artisan/make commands via Makefile targets"
+    ]
+  }
 }
