@@ -123,10 +123,14 @@ read -p "Install PHP extensions and global Composer packages? (y/n) " -n 1 -r
 echo ""
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     step "Installing PHP extensions"
-    pecl install imagick 2>/dev/null || warn "imagick already installed or failed"
-    pecl install memcached 2>/dev/null || warn "memcached already installed or failed"
-    pecl install xdebug 2>/dev/null || warn "xdebug already installed or failed"
-    pecl install redis 2>/dev/null || warn "redis already installed or failed"
+    # Installed from shivammathur/extensions (same tap and mechanism PHP Monitor's own
+    # extension manager uses) instead of pecl: precompiled, version-pinned, and avoids
+    # duplicate `extension=` entries in php.ini if PHP Monitor later manages the same one.
+    PHP_VERSION=$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;')
+    brew install "shivammathur/extensions/imagick@${PHP_VERSION}" || warn "imagick already installed or failed"
+    brew install "shivammathur/extensions/memcached@${PHP_VERSION}" || warn "memcached already installed or failed"
+    brew install "shivammathur/extensions/xdebug@${PHP_VERSION}" || warn "xdebug already installed or failed"
+    brew install "shivammathur/extensions/phpredis@${PHP_VERSION}" || warn "phpredis already installed or failed"
     success "PHP extensions processed"
 
     step "Installing global Composer packages"

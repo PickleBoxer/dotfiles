@@ -3,6 +3,7 @@
 
 # Core tools
 brew "node"
+brew "git"
 brew "composer"
 brew "pkgconf"
 brew "wget"
@@ -11,7 +12,9 @@ brew "hub"
 brew "gh"
 brew "ack"
 brew "doctl"
+brew "cloudflared"
 cask "1password-cli"
+cask "ngrok"
 brew "git-secret"
 brew "imagemagick"
 brew "yarn"
@@ -51,6 +54,7 @@ brew "zoxide"
 brew "bat"
 brew "eza"
 brew "ripgrep"
+brew "grep"
 brew "fd"
 brew "git-delta"
 brew "fnm"
@@ -69,6 +73,8 @@ brew "bash"
 
 # Development tools
 brew "mkcert"
+brew "xcode-build-server"
+brew "libmemcached" # required by shivammathur/extensions/memcached in bin/install
 # Both PHP formulae come from shivammathur/php so PHP Monitor can switch between
 # them; mixing in homebrew/core's "php" collides with shivammathur/php/php (same
 # formula name, different tap).
