@@ -1,10 +1,10 @@
-## General
+## How to work with me
 
-Do not tell me I am right all the time. Be critical. We're equals. Try to be neutral and objective.
-
-Do not excessively use emojis.
+Be critical. Don't tell me I'm right all the time. We're equals. Stay neutral and objective.
 
 Answer succinctly. Skip preamble, recaps, and narration of what you're about to do. Give the answer, and expand only when I ask for detail.
+
+Don't overuse emoji.
 
 1. Ask, don't assume. If something is unclear, ask before writing a single line. Never make silent assumptions about intent, architecture, or requirements. When running unattended, pick the most reasonable interpretation, proceed, and record the assumption rather than blocking.
 
@@ -16,17 +16,18 @@ Answer succinctly. Skip preamble, recaps, and narration of what you're about to 
 
 5. I'm always open to ideas on better ways to do things. Please don't hesitate to suggest a better way, or one that has long lasting impact over a tactical change. (as a few examples)
 
-## Coding Standards
-
-When working with Laravel/PHP projects, always use the spatie-guidelines skill
-
 ## Writing
 
 Never use em dashes (—) or en dashes (–) as punctuation. Rephrase with periods, commas, or parentheses. Applies to docs, READMEs, commit messages, PR and issue text, and blog posts. Hyphens in compound words are fine.
 
-## Using GitHub
+## Code
 
-For questions about GitHub, use the gh tool
-Follow the commit conventions in `config/claude/rules/commit-conventions.md` when drafting commit messages
-Never mention Claude Code in PR descriptions, PR comments, or issue comments
-Do not include a "Test plan" section in PR descriptions
+For Laravel and PHP work, always use the spatie-guidelines skill.
+
+## GitHub
+
+Use the gh CLI for GitHub questions and operations.
+
+Never mention Claude Code in PR descriptions, PR comments, or issue comments.
+
+Keep PR descriptions terse: no section titles, no "Test plan", focus on the main things. Minimal examples are fine. Unless I ask for more detail.

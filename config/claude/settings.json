@@ -1,4 +1,5 @@
 {
+  "cleanupPeriodDays": 365,
   "env": {
     "CLAUDE_CODE_NO_FLICKER": "1"
   },
@@ -9,12 +10,6 @@
   },
   "permissions": {
     "allow": [
-      "Skill(ray-skill:*)",
-      "Skill(php-guidelines-from-spatie:*)",
-      "Skill(fix-github-issue:*)",
-      "Skill(context7-auto-research:*)",
-      "Skill(readability:*)",
-      "Skill(agent-browser:*)",
       "Bash(gh:*)",
       "Bash(curl:*)",
       "Bash(composer:*)",
@@ -22,7 +17,9 @@
       "Bash(vendor/bin/pest:*)",
       "Bash(git:*)",
       "Bash(php artisan:*)",
+      "Bash(php:*)",
       "Bash(npm:*)",
+      "Bash(npx:*)",
       "Bash(yarn:*)",
       "Bash(pnpm:*)",
       "Bash(docker:*)",
@@ -39,6 +36,7 @@
       "Bash(cp:*)",
       "Bash(mv:*)",
       "Bash(touch:*)",
+      "Bash(chmod:*)",
       "Bash(pwd:*)",
       "Bash(which:*)",
       "Bash(whoami:*)",
@@ -85,6 +83,16 @@
     "defaultMode": "auto"
   },
   "disableClaudeAiConnectors": true,
+  "skillOverrides": {
+    "simplify": "user-invocable-only",
+    "update-config": "user-invocable-only",
+    "keybindings-help": "user-invocable-only",
+    "fewer-permission-prompts": "user-invocable-only",
+    "loop": "user-invocable-only",
+    "schedule": "user-invocable-only",
+    "run": "user-invocable-only",
+    "init": "user-invocable-only"
+  },
   "disableBundledSkills": false,
   "disableRemoteControl": true,
   "disableWorkflows": true,
@@ -134,7 +142,15 @@
     }
   },
   "feedbackDrafts": "off",
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": [
+      "Thinking"
+    ]
+  },
   "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "fastMode": true,
   "awaySummaryEnabled": false,
   "autoMemoryEnabled": true,
   "skipDangerousModePermissionPrompt": true,
