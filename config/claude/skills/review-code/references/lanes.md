@@ -22,7 +22,7 @@ For changed PHP files, check routing, database performance, and architecture aga
 
 ## Lane 5: React
 
-Only when JS or TS files changed. Check against the `react-best-practices` skill.
+Only when JS or TS files changed. Check against the `vercel-react-best-practices` skill.
 
 ## Lane 6: security (always)
 
@@ -46,7 +46,7 @@ Run all lanes in parallel, in a single message.
 | 2 PHP simplification | the `laravel-simplifier:laravel-simplifier` agent |
 | 3 Spatie conventions | a `general-purpose` agent invoking `spatie-guidelines` |
 | 4 Laravel practices | a `general-purpose` agent invoking `laravel-best-practices` |
-| 5 React | a `general-purpose` agent invoking `react-best-practices` |
+| 5 React | a `general-purpose` agent invoking `vercel-react-best-practices` |
 | 6 security | `/security-review` on the target |
 
 ### Codex
@@ -57,7 +57,7 @@ Run all lanes in parallel, in a single message.
 | 2 PHP simplification | the simplifier is a Claude plugin agent, but its definition is a plain file. Read `~/.claude/plugins/cache/laravel/laravel-simplifier/*/agents/laravel-simplifier.md` and apply it yourself. If that path does not exist, say the lane was skipped. |
 | 3 Spatie conventions | read `spatie-guidelines` and apply it to the changed files yourself |
 | 4 Laravel practices | **only if `laravel-best-practices` is readable from this repo.** It is normally installed by Laravel Boost into `<repo>/.claude/skills/`, which Codex does not load. Read that path directly if it exists, otherwise say the lane was skipped. |
-| 5 React | read `react-best-practices` and apply it to the changed files yourself |
+| 5 React | read `vercel-react-best-practices` and apply it to the changed files yourself |
 | 6 security | apply the lane 6 checklist to the changed files yourself |
 
 Never report a review as complete without naming the lanes that were skipped.

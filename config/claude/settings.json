@@ -113,7 +113,9 @@
     "claude-code-setup@claude-plugins-official": false,
     "php-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
-    "mattpocock-skills@claude-plugins-official": true
+    "mattpocock-skills@claude-plugins-official": true,
+    "laravel@laravel": true,
+    "swift-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "swift-architecture-skill": {

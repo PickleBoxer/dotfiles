@@ -6,6 +6,41 @@
 
 Personal dotfiles with modern shell tooling, optimized for Laravel/PHP development. Features fast startup times, smart directory navigation, and modern CLI tools.
 
+## Contents
+
+**Getting started**
+
+- [Key Features](#key-features)
+- [Quick Start](#quick-start) - SSH key, then clone and run `bin/install`
+- [What's Included](#whats-included) - [Shell & Prompt](#shell--prompt) · [Modern CLI Tools](#modern-cli-tools) · [Development Tools](#development-tools) · [QuickLook Plugins](#quicklook-plugins)
+
+**Reference**
+
+- [How It Works](#how-it-works) - [Symlinked Files](#symlinked-files) · [Sourced Files](#sourced-files) · [Starship Prompt](#starship-prompt) · [Conductor Terminal Support](#conductor-terminal-support)
+- [Daily Usage](#daily-usage) - [Smart Navigation](#smart-navigation) · [Laravel/PHP Shortcuts](#laravelphp-shortcuts) · [Data Processing](#data-processing) · [Maintenance Commands](#maintenance-commands) · [Syncing Changes from Upstream](#syncing-changes-from-upstream-freekmurzedotfiles)
+- [Version Management](#version-management) - [Node.js via fnm](#nodejs-via-fnm) · [PHP & Composer via Homebrew](#php--composer-via-homebrew) · [DDEV vs Valet](#local-development-ddev-vs-valet)
+- [Package Management](#package-management) - the Brewfile and global npm and Composer packages
+- [DDEV SSH Commit Signing](#ddev-ssh-commit-signing)
+
+**AI setup**
+
+- [Claude Code Integration](#claude-code-integration) - one config for Claude Code and Codex
+  - [Quick Install (Standalone)](#quick-install-standalone) - the AI setup without the rest of the dotfiles
+  - [Skills](#skills-version-controlled) - grouped by purpose
+  - [Adding New Skills](#adding-new-skills)
+  - [Settings](#settings-configclaudesettingsjson) - including per-project scoping
+  - [Agents](#agents-version-controlled) - custom subagents
+  - [Code Intelligence](#code-intelligence) - Laravel LSP, Intelephense, TypeScript
+  - [The Review Workflow](#the-review-workflow) - the six lanes behind `review-code` and `review-pr`
+  - [Sharing With Codex](#sharing-with-codex) - how one source feeds both harnesses
+
+**Everything else**
+
+- [Customization](#customization) - [Personal Aliases & Functions](#personal-aliases--functions) · [Project-Specific Variables](#project-specific-variables)
+- [Post-Installation](#post-installation) · [Tool Comparisons](#tool-comparisons) · [Utilities](#utilities) · [Credits](#credits)
+
+---
+
 ## Key Features
 
 - **Starship Prompt** - Fast, cross-shell prompt with Powerline style (configured via `config/starship.toml`)
@@ -124,7 +159,7 @@ Conductor's built-in terminal can't render Nerd Font icons or powerline separato
 | Normal terminal (Ghostty, iTerm, ...)  | `config/starship.toml`         | enabled     |
 | Conductor's terminal                   | `config/starship-plain.toml`   | disabled    |
 
-No manual switching needed — it's automatic per-session.
+No manual switching needed, it's automatic per-session.
 
 ---
 
@@ -229,7 +264,7 @@ brew upgrade composer # Update Composer
 
 This setup uses **DDEV** (Docker-based) as the primary local development environment. It manages PHP versions, databases, and services per-project with zero global config.
 
-**Laravel Valet** is available as a lightweight alternative — faster to start, no Docker required, but shares a single global PHP version. To install:
+**Laravel Valet** is available as a lightweight alternative: faster to start, no Docker required, but shares a single global PHP version. To install:
 
 ```bash
 composer global require laravel/valet
@@ -385,12 +420,14 @@ Settings from these files merge (project-level list entries add to user-level on
     "sentry-cli": "off"
   },
   "enabledPlugins": {
-    "music@skills-dir": true
+    "swift-architecture-skill@swift-architecture-skill": true
   }
 }
 ```
 
-`skillOverrides` only affects loose skills (the ones directly under `config/claude/skills/`, like `sentry-cli` or `conductor`). Plugin-bundled skills (like `marketing`, which ships its own `.claude-plugin/plugin.json`) are controlled via `enabledPlugins` instead — `skillOverrides` doesn't apply to them.
+That's the real pattern used for the Swift plugins registered in `extraKnownMarketplaces` (`swift-architecture-skill`, `swift-concurrency-agent-skill`, `swiftui-agent-skill`, `swift-testing-agent-skill`): they stay off in `enabledPlugins` globally, and get turned on per repo where they're actually relevant.
+
+`skillOverrides` only affects loose skills (the ones directly under `config/claude/skills/`, like `sentry-cli` or `conductor`). Plugin-bundled skills (like `marketing`, which ships its own `.claude-plugin/plugin.json`) are controlled via `enabledPlugins` instead, `skillOverrides` doesn't apply to them.
 
 ### Agents (Version Controlled)
 
@@ -399,6 +436,47 @@ All custom agents are stored in `config/claude/agents/` and version-controlled w
 **Custom Agents:**
 
 - `laravel-feature-builder` - Implements new features in Laravel applications (models, controllers, migrations, routes, views)
+
+Most PHP simplification now happens through the `laravel-simplifier:laravel-simplifier` agent, from the `laravel@laravel` plugin marketplace enabled in `enabledPlugins`, rather than a custom agent in this repo. It's lane 2 of the review workflow below.
+
+### Code Intelligence
+
+Three language servers give the agent diagnostics after every edit and real symbol navigation instead of grep.
+
+| Server | Provides | Install |
+| --- | --- | --- |
+| `laravel-lsp@skills-dir` | Route names, view paths, translation strings, middleware aliases, and container bindings, in `.blade.php` | `composer global require laravel/lsp` |
+| `php-lsp` | PHP types, symbols, references, signatures | `npm i -g intelephense` |
+| `typescript-lsp` | TypeScript and TSX intelligence | `npm i -g typescript-language-server typescript` |
+
+Claude Code registers one server per file extension, so the two PHP servers split the work: Intelephense takes `.php` for types, undefined methods, and references, and Laravel LSP takes `.blade.php` for route names, view paths, and translation strings.
+
+### The Review Workflow
+
+`review-code` and `review-pr` share one definition of what a review is, in `skills/review-code/references/lanes.md`. Six lanes run in parallel:
+
+1. **Correctness** - bugs, via `/code-review`
+2. **PHP simplification** - via the `laravel-simplifier` agent
+3. **Spatie conventions** - via `spatie-guidelines`
+4. **Laravel practices** - via Laravel Boost's per-repo `laravel-best-practices`
+5. **React** - via `vercel-react-best-practices`, only when JS or TS changed
+6. **Security** - authorization, mass assignment, injection, XSS, secrets, SSRF, PII in logs
+
+Findings are deduplicated, and security outranks correctness, which outranks conventions. Both defect lanes require a concrete failure scenario, so "consider adding a null check" does not count as a finding.
+
+The lanes file has a per-harness table, so the same review runs under Codex with its own tools and available subagents.
+
+### Sharing With Codex
+
+Codex reads `AGENTS.md` natively and Claude Code reads `CLAUDE.md`, so one file is symlinked under both names. Skills also have one source: `config/claude/skills/`. Claude reads it through `~/.claude/skills`; Codex reads individual symlinks in `~/.agents/skills`, its documented user skill directory.
+
+```bash
+bin/install-agent-skill-sync
+```
+
+The script links every directory with a top-level `SKILL.md` and installs a per-user macOS LaunchAgent (`dev.maticvertacnik.agent-skill-sync`) so no manual command is needed when adding skills. It runs at login, watches the source directory, and checks every 60 seconds for changes inside existing folders. Removed or renamed skills have their old managed links cleaned up. `bin/install-claude-code` installs this job automatically on new machines.
+
+To run a check immediately without waiting on the background job, use `bin/link-agent-skills`. Background errors go to `~/Library/Logs/dev.maticvertacnik.agent-skill-sync.log`.
 
 ---
 
@@ -456,6 +534,8 @@ The `bin/` directory contains helper scripts:
 
 - **install** - Main installation script (idempotent, safe to re-run)
 - **install-claude-code** - Standalone Claude Code installer
+- **link-agent-skills** - Symlink the harness-neutral skills and `AGENTS.md` into Codex, leaving Codex's own built-in skills alone
+- **install-agent-skill-sync** - Install the macOS background job that keeps shared skill links current automatically
 - **update** - Update dotfiles, Homebrew, npm, and Composer packages
 - **doctor** - Health check and diagnostic tool
 - **conductor-merge** - Fast-forward the current Conductor workspace branch into `main` (which lives in another git worktree). Use `--push` to also push `main` to `origin`, which clears Conductor's "Changes" view (it diffs against `origin/main`).
