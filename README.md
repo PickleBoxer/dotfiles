@@ -85,7 +85,7 @@ The installation creates symlinks from your home directory to the dotfiles repos
 | `~/.mackup.cfg`                       | `~/.dotfiles/macos/.mackup.cfg`                       | Mackup backup configuration                            |
 | `~/.claude/skills`                    | `~/.dotfiles/config/claude/skills/`                   | All Claude Code skills (version-controlled)            |
 | `~/.claude/agents`                    | `~/.dotfiles/config/claude/agents/`                   | All Claude Code agents (version-controlled)            |
-| `~/.claude/rules`                     | `~/.dotfiles/config/claude/rules/`                    | All Claude Code rules (version-controlled)              |
+| `~/.claude/rules`                     | `~/.dotfiles/config/claude/rules/`                    | All Claude Code rules (version-controlled)            |
 | `~/.claude/CLAUDE.md`                 | `~/.dotfiles/config/claude/AGENTS.md`                 | Claude Code configuration (shared with Codex as AGENTS.md) |
 | `~/.claude/settings.json`             | `~/.dotfiles/config/claude/settings.json`             | Claude Code settings                                   |
 
@@ -115,23 +115,16 @@ The prompt is configured in `config/starship.toml` and uses a Powerline-style ag
 - `?` - Untracked files
 - `✘` - Conflicted files
 
-### Switching Prompts
+### Conductor Terminal Support
 
-Both shell configs are kept for easy switching:
+Conductor's built-in terminal can't render Nerd Font icons or powerline separators. `.zshrc` and `.aliases` detect it automatically (`$__CFBundleIdentifier` / `$CONDUCTOR_INTERNAL_BIN_DIR`) and fall back to plain-text equivalents:
 
-| File                  | Description                                         |
-| --------------------- | --------------------------------------------------- |
-| `home/.zshrc`         | **Active** — Starship prompt, no Oh My Zsh overhead |
-| `home/.zshrc.ohmyzsh` | Backup — Oh My Zsh with custom agnoster theme       |
+| Context                               | Starship config               | `eza` icons |
+| -------------------------------------- | ------------------------------ | ----------- |
+| Normal terminal (Ghostty, iTerm, ...)  | `config/starship.toml`         | enabled     |
+| Conductor's terminal                   | `config/starship-plain.toml`   | disabled    |
 
-To switch back to Oh My Zsh:
-
-```bash
-cd ~/.dotfiles
-mv home/.zshrc home/.zshrc.starship
-mv home/.zshrc.ohmyzsh home/.zshrc
-ln -sf ~/.dotfiles/home/.zshrc ~/.zshrc && exec zsh
-```
+No manual switching needed — it's automatic per-session.
 
 ---
 
@@ -252,19 +245,21 @@ Both can coexist. DDEV is preferred for projects that need specific PHP versions
 All Homebrew packages are declared in `config/Brewfile`. To add a new tool:
 
 ```bash
-echo 'brew "neovim"' >> ~/.dotfiles/config/Brewfile
+echo 'brew "tree"' >> ~/.dotfiles/config/Brewfile
 brew bundle --file=~/.dotfiles/config/Brewfile
 ```
 
 **Complete package list:**
 
-- **Core**: node, php, composer, pkg-config, wget, httpie, ncdu, hub, ack, doctl, 1password-cli, git-secret, imagemagick, yarn, ghostscript, mackup
-- **Modern CLI**: zoxide, bat, eza, ripgrep, fd, git-delta, fnm, fzf, direnv, jq, yq, bottom, zsh-autosuggestions
-- **Fonts**: font-meslo-lg-nerd-font (powerline icons and modern glyphs)
-- **QuickLook**: qlcolorcode, qlstephen, qlmarkdown, quicklook-json, qlprettypatch, quicklook-csv, betterzip, suspicious-package
-- **PHP Extensions**: imagick, memcached, xdebug, redis
-- **Global npm**: agent-browser
-- **Global Composer**: laravel/envoy, spatie/phpunit-watcher
+- **Core**: node, php, php@8.4, composer, pkgconf, wget, ncdu, hub, gh, ack, doctl, 1password-cli, git-secret, imagemagick, yarn, ghostscript, mackup, mkcert, bun
+- **Local dev**: ddev, phpmon
+- **Apps**: raycast, ghostty, rectangle, google-chrome, slack, tableplus, visual-studio-code, dbngin, github, httpie-desktop, imageoptim, tinkerwell, the-unarchiver, vlc
+- **Modern CLI**: starship, zoxide, bat, eza, ripgrep, fd, git-delta, fnm, fzf, direnv, jq, yq, bottom, mas, tree, trash, uv, coreutils, gnu-sed, bash
+- **Zsh**: zsh-autosuggestions, zsh-syntax-highlighting
+- **Fonts**: font-meslo-lg-nerd-font, font-jetbrains-mono, font-jetbrains-mono-nerd-font, font-fira-code, font-fira-code-nerd-font, font-open-sans, font-roboto, font-bitter, font-lato
+- **QuickLook**: qlmarkdown, betterzip, suspicious-package
+- **PHP Extensions** (optional, via `bin/install` prompt): imagick, memcached, xdebug, redis
+- **Global Composer** (optional, via `bin/install` prompt): laravel/pint, laravel/envoy, laravel/installer, spatie/phpunit-watcher
 
 ---
 
@@ -307,25 +302,45 @@ curl -fsSL https://raw.githubusercontent.com/PickleBoxer/dotfiles/main/bin/insta
 
 All skills are stored in `config/claude/skills/` and version-controlled with your dotfiles. When you run the installer on a new Mac, all skills are immediately available.
 
-**Custom Skills:**
+**Laravel / PHP:**
 
-- `ray-skill` - Ray debugging integration
-- `fix-github-issue` - GitHub issue automation
+- `spatie-guidelines` - Spatie's PHP, Laravel, JS, and Vue coding conventions
+- `spatie-package-skeleton` - Scaffold Spatie-style PHP/Laravel packages
+- `laravel-lsp` - Wires Laravel's language server into Claude Code (route names, config keys, view paths)
+- `laravel-inertia-react-structure` - Spatie's frontend structure conventions for Laravel Inertia + React
+- `livewire-4` - Build Livewire 4 components and applications
+- `speeding-up-laravel-tests` - Diagnose and fix slow Laravel/Pest test suites
 
-**Community Skills:**
+**Code quality / review:**
 
-- `vercel-labs/agent-skills` - Web design guidelines and React best practices
-- `anthropics/skills` - Frontend design and skill creation tools
-- `vercel-labs/agent-browser` - Browser automation
-- `expo/skills` - React Native with Expo
-- `callstackincubator/agent-skills` - React Native performance
-- `coreyhaines31/marketingskills` - Copywriting and programmatic SEO
-- `copy-editing` - Marketing copy editing
-- `copywriting` - Marketing copywriting
-- `frontend-design` - Frontend design patterns
-- `pdf` - PDF manipulation
-- `seo-audit` - SEO auditing
-- `web-design-guidelines` - Web design best practices
+- `audit-architecture` - Read-only, multi-agent architecture audit (data structures, state, control flow)
+- `audit-codebase` - Read-only codebase-wide simplification audit
+- `refactor` - Surgical refactoring without behavior change
+- `refactor-plan` - Plan a multi-file refactor before executing it
+- `review-code` - Review changed code against project conventions
+- `review-pr` - Review and merge GitHub PRs for Spatie packages
+- `explain-changes` - Explain a branch's changes as an HTML walkthrough
+
+**Frontend:**
+
+- `frontend-design` - Distinctive, intentional visual/UI design guidance
+- `web-design-guidelines` - Review UI code against Web Interface Guidelines
+- `vercel-react-best-practices` - React/Next.js performance patterns from Vercel Engineering
+- `typescript-advanced-types` - Advanced TypeScript type system patterns
+
+**Tools & integrations:**
+
+- `chrome-devtools` - Browser automation/debugging via Chrome DevTools MCP
+- `conductor` - Manage Conductor.build parallel-agent workspaces and sessions
+- `sentry-cli` - Sentry CLI for issues, events, and projects
+- `mailcoach` - Manage Mailcoach email marketing via CLI
+- `typefully` - Draft, schedule, and manage social media posts
+- `code-snippet-images` - Generate code screenshot images for social/docs
+- `find-skills` - Discover and install new agent skills
+
+**Marketing** (bundled plugin, `config/claude/skills/marketing/`, disabled by default):
+
+- ~25 sub-skills covering CRO, SEO, ads, copywriting, pricing, onboarding, and more for Spatie product sites
 
 ### Adding New Skills
 
@@ -342,16 +357,49 @@ git push
 
 Browse more skills at [skills.sh](https://skills.sh)
 
+### Settings (`config/claude/settings.json`)
+
+Symlinked to `~/.claude/settings.json`, so every project on this machine shares the same base config. Notable pieces:
+
+- **`permissions`** - `allow`/`deny`/`ask` lists for tools and Bash commands, plus `defaultMode: auto`. The `deny` list blocks risky actions outright (e.g. `git commit`, `ExitPlanMode`); `ask` prompts before reading sensitive paths (`~/.ssh`, `.env` files).
+- **`enabledPlugins`** - toggles whole bundled plugins (e.g. `php-lsp`, `typescript-lsp`, `mattpocock-skills`) on/off globally.
+- **`skillOverrides`** - per-skill visibility for loose (non-plugin) skills. Values: `"on"` (default), `"name-only"`, `"user-invocable-only"`, or `"off"`. Used here to keep utility skills like `simplify`/`run`/`init` invocable only via explicit command, not auto-triggered.
+- **`autoMode`** - environment context (org, cloud provider, trusted domains, sensitive paths) that auto mode uses to judge which actions need confirmation. This is machine/project-specific, not something to copy between repos.
+- **`effortLevel`**, **`fastMode`**, **`spinnerVerbs`**, **`cleanupPeriodDays`** - misc behavior tuning.
+
+#### Scoping skills/plugins per project
+
+Both `enabledPlugins` and `skillOverrides` work the same way in **any** settings file Claude Code reads, not just the global one:
+
+| Scope | File | Applies to |
+| ----- | ---- | ---------- |
+| User (this machine, all projects) | `~/.claude/settings.json` | everything, unless overridden below |
+| Shared project (committed, everyone who clones the repo) | `<repo>/.claude/settings.json` | just that repo |
+| Local project (this machine, this repo only, gitignored) | `<repo>/.claude/settings.local.json` | just that repo, just you |
+
+Settings from these files merge (project-level list entries add to user-level ones rather than replacing them). So a specific repo can disable a globally-available skill, or turn on a plugin that's off everywhere else, without touching this dotfiles repo at all:
+
+```json
+// <some-repo>/.claude/settings.json
+{
+  "skillOverrides": {
+    "sentry-cli": "off"
+  },
+  "enabledPlugins": {
+    "music@skills-dir": true
+  }
+}
+```
+
+`skillOverrides` only affects loose skills (the ones directly under `config/claude/skills/`, like `sentry-cli` or `conductor`). Plugin-bundled skills (like `marketing`, which ships its own `.claude-plugin/plugin.json`) are controlled via `enabledPlugins` instead — `skillOverrides` doesn't apply to them.
+
 ### Agents (Version Controlled)
 
 All custom agents are stored in `config/claude/agents/` and version-controlled with your dotfiles. When you run the installer on a new Mac, all agents are immediately available.
 
 **Custom Agents:**
 
-- `laravel-simplifier` - Simplifies and refines PHP/Laravel code for clarity and maintainability
-- `laravel-debugger` - Diagnoses and fixes issues in Laravel applications
-- `laravel-feature-builder` - Implements new features in Laravel applications
-- `task-planner` - Breaks down complex tasks into actionable steps
+- `laravel-feature-builder` - Implements new features in Laravel applications (models, controllers, migrations, routes, views)
 
 ---
 
@@ -385,8 +433,6 @@ Variables load when you enter the directory and unload when you leave.
 ## Post-Installation
 
 1. **Restore settings** (optional): Run `mackup restore` if you have backups
-
-2. **Migrate history** (upgrading only): Run `migration/migrate-z-to-zoxide.sh` if you have `~/.z`
 
 ---
 
