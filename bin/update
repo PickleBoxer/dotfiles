@@ -38,6 +38,11 @@ success "npm packages updated"
 
 # Update global Composer packages
 step "Updating global Composer packages"
+# Reuse the gh CLI's token so Composer's GitHub API requests are authenticated (avoids
+# the 60/hour unauthenticated rate limit when downloading GitHub-hosted packages).
+if command -v gh &>/dev/null && gh auth status &>/dev/null; then
+    composer config -g github-oauth.github.com "$(gh auth token)" || warn "Could not configure Composer GitHub auth"
+fi
 composer global update
 success "Composer packages updated"
 

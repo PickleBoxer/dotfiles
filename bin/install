@@ -135,6 +135,12 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     success "PHP extensions processed"
 
     step "Installing global Composer packages"
+    # Composer downloads some GitHub-hosted packages via the GitHub API, which rate-limits
+    # unauthenticated requests to 60/hour; reuse the gh CLI's token (if logged in) to avoid
+    # hitting that limit and getting stuck on an interactive token prompt.
+    if command -v gh &>/dev/null && gh auth status &>/dev/null; then
+        composer config -g github-oauth.github.com "$(gh auth token)" || warn "Could not configure Composer GitHub auth"
+    fi
     composer global require laravel/pint || warn "pint already installed or failed"
     composer global require laravel/envoy || warn "envoy already installed or failed"
     composer global require laravel/installer || warn "installer already installed or failed"
