@@ -51,7 +51,7 @@ for entry in "$SOURCE"/*; do
     skill="$(basename "$entry")"
     case "$skill" in
         # These depend on Claude-specific MCP tooling or plugin execution setup.
-        ui|typefully) continue ;;
+        ui) continue ;;
     esac
     link_shared "$entry" "$SHARED_SKILLS/$skill"
     linked=$((linked + 1))

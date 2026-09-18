@@ -334,7 +334,6 @@ All skills are stored in `config/claude/skills/` and version-controlled with you
 - `conductor` - Manage Conductor.build parallel-agent workspaces and sessions
 - `sentry-cli` - Sentry CLI for issues, events, and projects
 - `mailcoach` - Manage Mailcoach email marketing via CLI
-- `typefully` - Draft, schedule, and manage social media posts
 - `code-snippet-images` - Generate code screenshot images for social/docs
 - `find-skills` - Discover and install new agent skills
 
