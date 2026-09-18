@@ -93,6 +93,13 @@ step "Installing packages from Brewfile"
 brew bundle --file=~/.dotfiles/config/Brewfile || warn "Some packages failed (likely already installed)"
 success "Brewfile processed"
 
+# Trust third-party taps used by the Brewfile (required since Homebrew's tap-trust
+# security gate blocks `brew info`/`brew upgrade` on untrusted taps, e.g. PHP Monitor
+# querying `php@8.4` from shivammathur/php)
+step "Trusting Homebrew taps"
+brew trust --tap shivammathur/php shivammathur/extensions nicoverbruggen/cask ddev/ddev oven-sh/bun || warn "Trusting taps failed"
+success "Taps trusted"
+
 # fnm - Node.js version manager
 step "Setting up fnm"
 eval "$(fnm env --use-on-cd)" || warn "fnm activation failed"
@@ -122,6 +129,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     composer global require laravel/envoy || warn "envoy already installed or failed"
     composer global require laravel/installer || warn "installer already installed or failed"
     composer global require spatie/phpunit-watcher || warn "phpunit-watcher already installed or failed"
+    composer global require laravel/lsp || warn "laravel/lsp already installed or failed"
     success "Composer packages processed"
 else
     warn "Skipping PHP extensions and Composer packages"
