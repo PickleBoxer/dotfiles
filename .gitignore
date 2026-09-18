@@ -8,3 +8,6 @@
 # Local configs
 home/.yarnrc
 .claude/
+
+# Auto-synced Claude skills (managed by Claude Code, not version controlled)
+config/claude/skills/synced/
