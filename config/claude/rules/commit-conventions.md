@@ -22,7 +22,7 @@ Rules:
 - No period at the end of the title
 - Scopes are mandatory: `feat(api):`, `fix(auth):`, `docs(readme):`
 - Simple, brief title (max ~50 chars); use the body for a more detailed "why"/"how" explanation on larger commits
-- Structure the body with bullet points (`-`) when listing multiple changes or details
+- Structure the body with bullet points (`-`) when listing multiple changes or details — default to bullets whenever the body makes more than one point, even short ones; don't fall back to flowing prose paragraphs instead
 - Add a `Tags:` line for important metadata when useful (e.g. `Tags: breaking`, `Tags: needs-tests`, `Tags: docs-only`)
 - Never include AI attribution: no "🤖 Generated with Claude Code" lines, no "Co-Authored-By: Claude" tags, no emojis
 

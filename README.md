@@ -121,7 +121,7 @@ The installation creates symlinks from your home directory to the dotfiles repos
 | `~/.claude/skills`                    | `~/.dotfiles/config/claude/skills/`                   | All Claude Code skills (version-controlled)            |
 | `~/.claude/agents`                    | `~/.dotfiles/config/claude/agents/`                   | All Claude Code agents (version-controlled)            |
 | `~/.claude/rules`                     | `~/.dotfiles/config/claude/rules/`                    | All Claude Code rules (version-controlled)            |
-| `~/.claude/CLAUDE.md`                 | `~/.dotfiles/config/claude/AGENTS.md`                 | Claude Code configuration (shared with Codex as AGENTS.md) |
+| `~/.claude/AGENTS.md`                 | `~/.dotfiles/config/claude/AGENTS.md`                 | Claude Code configuration (shared with Codex, both read AGENTS.md natively) |
 | `~/.claude/settings.json`             | `~/.dotfiles/config/claude/settings.json`             | Claude Code settings                                   |
 
 ### Sourced Files
@@ -329,7 +329,7 @@ curl -fsSL https://raw.githubusercontent.com/PickleBoxer/dotfiles/main/bin/insta
 ### What's Included
 
 - **Claude Code CLI** - Installed via Homebrew
-- **Custom configuration** - CLAUDE.md with coding guidelines (shared with Codex as AGENTS.md)
+- **Custom configuration** - AGENTS.md with coding guidelines (shared with Codex, read natively by both)
 - **Version-controlled skills** - Entire `~/.claude/skills` directory symlinked to dotfiles
 - **Version-controlled agents** - Entire `~/.claude/agents` directory symlinked to dotfiles
 
@@ -472,7 +472,7 @@ The lanes file has a per-harness table, so the same review runs under Codex with
 
 ### Sharing With Codex
 
-Codex reads `AGENTS.md` natively and Claude Code reads `CLAUDE.md`, so one file is symlinked under both names. Skills also have one source: `config/claude/skills/`. Claude reads it through `~/.claude/skills`; Codex reads individual symlinks in `~/.agents/skills`, its documented user skill directory.
+Codex and Claude Code both read `AGENTS.md` natively, so one file is symlinked under that name for both. Skills also have one source: `config/claude/skills/`. Claude reads it through `~/.claude/skills`; Codex reads individual symlinks in `~/.agents/skills`, its documented user skill directory.
 
 ```bash
 bin/install-agent-skill-sync
