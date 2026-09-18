@@ -453,16 +453,20 @@ Claude Code registers one server per file extension, so the two PHP servers spli
 
 ### The Review Workflow
 
-`review-code` and `review-pr` share one definition of what a review is, in `skills/review-code/references/lanes.md`. Six lanes run in parallel:
+`review-code` and `review-pr` share one definition of what a review is, in `skills/review-code/references/lanes.md`. Six lanes run in parallel, each with its own dependency:
 
-1. **Correctness** - bugs, via `/code-review`
-2. **PHP simplification** - via the `laravel-simplifier` agent
-3. **Spatie conventions** - via `spatie-guidelines`
-4. **Laravel practices** - via Laravel Boost's per-repo `laravel-best-practices`
-5. **React** - via `vercel-react-best-practices`, only when JS or TS changed
-6. **Security** - authorization, mass assignment, injection, XSS, secrets, SSRF, PII in logs
+| Lane | Checks | Needs |
+| --- | --- | --- |
+| 1. Correctness (always) | Bugs | `/code-review` command, from the `code-review@claude-plugins-official` plugin |
+| 2. PHP simplification | Simplify PHP/Laravel code | `laravel-simplifier:laravel-simplifier` agent, from `laravel@laravel` |
+| 3. Spatie conventions | Style, docblocks, naming, Blade, git workflow | `spatie-guidelines` skill |
+| 4. Laravel practices | Routing, database performance, architecture | `laravel-best-practices` skill, installed per-project by Laravel Boost into `<repo>/.claude/skills/`; the lane is skipped in repos without it |
+| 5. React (only if JS/TS changed) | Hooks, effects, component design | `vercel-react-best-practices` skill |
+| 6. Security (always) | Authorization, mass assignment, injection, XSS, secrets, SSRF, PII in logs | `/security-review`, built into the Claude Code CLI itself |
 
 Findings are deduplicated, and security outranks correctness, which outranks conventions. Both defect lanes require a concrete failure scenario, so "consider adding a null check" does not count as a finding.
+
+`review-pr` additionally needs `pr-review-toolkit@claude-plugins-official` for its own `/review-pr` command.
 
 The lanes file has a per-harness table, so the same review runs under Codex with its own tools and available subagents.
 
