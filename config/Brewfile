@@ -3,7 +3,6 @@
 
 # Core tools
 brew "node"
-brew "php"
 brew "composer"
 brew "pkgconf"
 brew "wget"
@@ -70,7 +69,11 @@ brew "bash"
 
 # Development tools
 brew "mkcert"
-brew "php@8.4"
+# Both PHP formulae come from shivammathur/php so PHP Monitor can switch between
+# them; mixing in homebrew/core's "php" collides with shivammathur/php/php (same
+# formula name, different tap).
+brew "shivammathur/php/php"
+brew "shivammathur/php/php@8.4"
 cask "temurin@25"
 
 # Fonts
