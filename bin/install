@@ -115,6 +115,7 @@ success "fnm configured"
 # Global npm packages
 step "Installing global npm packages"
 npm install -g intelephense || warn "intelephense already installed or failed"
+npm install -g typescript-language-server typescript || warn "typescript-language-server already installed or failed"
 success "npm packages processed"
 
 # PHP development extras (extensions + global Composer packages)
