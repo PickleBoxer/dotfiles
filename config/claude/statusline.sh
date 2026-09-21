@@ -126,7 +126,13 @@ if [ -n "$transcript_path" ] && [ -f "$transcript_path" ]; then
   fi
 fi
 
-# Line 1 (optional): skills used | Line 2: model | git repo info | context used | 5h rate limit | 7d rate limit
+# Current working directory (short), with icon
+cwd_icon='📁'
+cwd_short=$(basename "$cwd")
+cwd_part=$(printf '\033[00;34m%s %s\033[00m' "$cwd_icon" "$cwd_short")
+
+# Line 1: cwd | Line 2 (optional): skills used | Line 3: model | git repo info | context used | 5h rate limit | 7d rate limit
+printf '%s\n' "$cwd_part"
 if [ -n "$skills_part" ]; then
   printf '%s\n' "$skills_part"
 fi
