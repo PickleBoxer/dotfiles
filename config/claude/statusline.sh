@@ -131,9 +131,10 @@ cwd_icon='📁'
 cwd_short=$(basename "$cwd")
 cwd_part=$(printf '\033[00;34m%s %s\033[00m' "$cwd_icon" "$cwd_short")
 
-# Line 1: cwd | Line 2 (optional): skills used | Line 3: model | git repo info | context used | 5h rate limit | 7d rate limit
-printf '%s\n' "$cwd_part"
+# Line 1: cwd + skills used | Line 2: model | git repo info | context used | 5h rate limit | 7d rate limit
 if [ -n "$skills_part" ]; then
-  printf '%s\n' "$skills_part"
+  printf '%s | %s\n' "$cwd_part" "$skills_part"
+else
+  printf '%s\n' "$cwd_part"
 fi
 printf '%s%s%s%s%s%s' "$model_part" "$git_part" "$ctx_part" "$five_hour_part" "$seven_day_part"
