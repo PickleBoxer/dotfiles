@@ -4,6 +4,7 @@
 input=$(cat)
 
 # Extract values from JSON
+transcript_path=$(echo "$input" | jq -r '.transcript_path // empty')
 cwd=$(echo "$input" | jq -r '.workspace.current_dir')
 model=$(echo "$input" | jq -r '.model.display_name')
 ctx_raw=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
@@ -47,7 +48,8 @@ else
 fi
 
 # Model label
-model_part=$(printf '\033[00;35m%s\033[00m' "$model")
+model_icon='🤖'
+model_part=$(printf '\033[00;35m%s %s\033[00m' "$model_icon" "$model")
 
 # Format remaining time as "Xd Yh", "Xh Ym", or "Xm"
 format_remaining() {
@@ -105,5 +107,27 @@ build_rate_part() {
 five_hour_part=$(build_rate_part "5h" "$five_hour_pct" "$five_hour_resets")
 seven_day_part=$(build_rate_part "7d" "$seven_day_pct" "$seven_day_resets")
 
-# Single line: model | git repo info | context used | 5h rate limit | 7d rate limit
-printf '%s%s%s%s%s' "$model_part" "$git_part" "$ctx_part" "$five_hour_part" "$seven_day_part"
+# Skills used this session, parsed from the transcript (orange)
+skills_part=""
+if [ -n "$transcript_path" ] && [ -f "$transcript_path" ]; then
+  skills_used=$(jq -rs '
+    [ .[]?.message?.content[]?
+      | select(type == "object" and .type == "tool_use" and (.name | test("skill"; "i")))
+      | (.input.command // .input.skill // .input.name // .input.skill_name // "")
+      | select(. != "")
+      | split(" ")[0]
+      | sub("^/"; "")
+    ]
+    | unique
+  ' "$transcript_path" 2>/dev/null | jq -r 'join(", ")' 2>/dev/null)
+
+  if [ -n "$skills_used" ]; then
+    skills_part=$(printf '\033[38;5;214mSkills: %s\033[00m' "$skills_used")
+  fi
+fi
+
+# Line 1 (optional): skills used | Line 2: model | git repo info | context used | 5h rate limit | 7d rate limit
+if [ -n "$skills_part" ]; then
+  printf '%s\n' "$skills_part"
+fi
+printf '%s%s%s%s%s%s' "$model_part" "$git_part" "$ctx_part" "$five_hour_part" "$seven_day_part"

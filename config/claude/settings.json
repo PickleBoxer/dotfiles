@@ -154,6 +154,13 @@
   "effortLevel": "high",
   "fastMode": true,
   "awaySummaryEnabled": false,
+  "pluginConfigs": {
+    "agents-md@builtin": {
+      "options": {
+        "instructionFiles": "claude-md-or-agents-md"
+      }
+    }
+  },
   "autoMemoryEnabled": true,
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark",
