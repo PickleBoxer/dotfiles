@@ -115,7 +115,8 @@
     "code-simplifier@claude-plugins-official": false,
     "commit-commands@claude-plugins-official": false,
     "frontend-design@claude-plugins-official": false,
-    "skill-creator@claude-plugins-official": true
+    "skill-creator@claude-plugins-official": true,
+    "laravel-lsp@dotfiles-skills": true
   },
   "extraKnownMarketplaces": {
     "swift-architecture-skill": {
@@ -140,6 +141,12 @@
       "source": {
         "source": "github",
         "repo": "twostraws/Swift-Testing-Agent-Skill"
+      }
+    },
+    "dotfiles-skills": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/maticvertacnik/.dotfiles/config/claude/skills"
       }
     }
   },

@@ -1,0 +1,13 @@
+{
+  "name": "dotfiles-skills",
+  "owner": {
+    "name": "Matic Vertacnik"
+  },
+  "plugins": [
+    {
+      "name": "laravel-lsp",
+      "source": "./laravel-lsp",
+      "description": "Framework-aware code intelligence for Laravel via the first-party laravel/lsp language server"
+    }
+  ]
+}
