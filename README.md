@@ -28,6 +28,7 @@ Personal dotfiles with modern shell tooling, optimized for Laravel/PHP developme
   - [Quick Install (Standalone)](#quick-install-standalone) - the AI setup without the rest of the dotfiles
   - [Skills](#skills-version-controlled) - grouped by purpose
   - [Adding New Skills](#adding-new-skills)
+  - [Bundled Plugins](#bundled-plugins) - local plugin marketplace, enabled per repo
   - [Settings](#settings-configclaudesettingsjson) - including per-project scoping
   - [Agents](#agents-version-controlled) - custom subagents
   - [Code Intelligence](#code-intelligence) - Laravel LSP, Intelephense, TypeScript
@@ -45,6 +46,7 @@ Personal dotfiles with modern shell tooling, optimized for Laravel/PHP developme
 
 - **Starship Prompt** - Fast, cross-shell prompt with Powerline style (configured via `config/starship.toml`)
 - **Version-Controlled Skills & Agents** - All Claude Code skills and agents synced via dotfiles
+- **Framework-Aware Code Intelligence** - Laravel LSP, Intelephense, and TypeScript language servers wired into the agent
 - **Fast Tools** - fnm, zoxide, ripgrep, bat, eza (all Rust-based for speed)
 - **Nerd Fonts** - Installed automatically via Brewfile for perfect icon support
 - **One Command Install** - `bin/install` sets up everything including Claude Code
@@ -123,6 +125,14 @@ The installation creates symlinks from your home directory to the dotfiles repos
 | `~/.claude/rules`                     | `~/.dotfiles/config/claude/rules/`                    | All Claude Code rules (version-controlled)            |
 | `~/.claude/AGENTS.md`                 | `~/.dotfiles/config/claude/AGENTS.md`                 | Claude Code configuration (shared with Codex, both read AGENTS.md natively) |
 | `~/.claude/settings.json`             | `~/.dotfiles/config/claude/settings.json`             | Claude Code settings                                   |
+| `~/.claude/statusline.sh`             | `~/.dotfiles/config/claude/statusline.sh`             | Claude Code status line script                         |
+| `~/.codex/AGENTS.md`                  | `~/.dotfiles/config/claude/AGENTS.md`                 | The same instructions, read natively by Codex          |
+| `~/.agents/skills/*`                  | `~/.dotfiles/config/claude/skills/*`                  | One symlink per shared skill, discovered by Codex. See `bin/link-agent-skills` |
+| `~/.config/ghostty/config`            | `~/.dotfiles/config/ghostty/config`                   | Ghostty terminal settings                              |
+| `~/.config/ghostty/themes`            | `~/.dotfiles/config/ghostty/themes`                   | Ghostty themes                                         |
+| `~/bin/php-format`                    | `~/.dotfiles/bin/php-format`                          | PHP formatter wrapper                                  |
+| `~/.ddev/homeadditions/.gitconfig`    | `~/.gitconfig`                                        | Git config inside DDEV containers, see [DDEV SSH Commit Signing](#ddev-ssh-commit-signing) |
+| `~/.ddev/homeadditions/.ssh/id_ed25519.pub` | `~/.ssh/id_ed25519.pub`                         | Public signing key inside DDEV containers              |
 
 ### Sourced Files
 
@@ -286,6 +296,18 @@ If you also need custom SSH host entries inside containers (e.g. a self-hosted G
 
 ## Claude Code Integration
 
+Everything the agents need lives in `config/claude/`, and both Claude Code and Codex read it from there. Nothing is duplicated per tool.
+
+```
+config/claude/
+├── AGENTS.md          the instructions, read by both harnesses
+├── settings.json      Claude Code settings, permissions, hooks
+├── statusline.sh      the status line script
+├── rules/             always-loaded rules (commit conventions)
+├── agents/            custom subagents
+└── skills/            23 skills, plus 2 bundled plugins
+```
+
 ### Quick Install (Standalone)
 
 Install just Claude Code without the full dotfiles:
@@ -323,6 +345,7 @@ All skills are stored in `config/claude/skills/` and version-controlled with you
 - `review-code` - Review changed code against project conventions
 - `review-pr` - Review and merge GitHub PRs for Spatie packages
 - `explain-changes` - Explain a branch's changes as an HTML walkthrough
+- `test-audit` - Authoring gate for new tests, plus an audit workflow for low-value or duplicative tests
 
 **Frontend:**
 
@@ -357,7 +380,33 @@ git commit -m "Add new skill"
 git push
 ```
 
+Two rules that decide whether a skill ever gets used:
+
+1. **The name and description determine everything.** A skill named after a person, or after a quarter of what it does, will not be found. Write the description around the phrases you would actually type.
+2. **Keep the body short and push detail into `references/`.** A skill body stays in context for the rest of the session once loaded, while reference files load only when needed.
+
 Browse more skills at [skills.sh](https://skills.sh)
+
+### Bundled Plugins
+
+`config/claude/skills/` doubles as a local plugin marketplace named `dotfiles-skills`, defined in `config/claude/skills/.claude-plugin/marketplace.json` and registered in `extraKnownMarketplaces` in `settings.json`. A directory with its own `.claude-plugin/plugin.json` is a plugin, which can be turned off globally and enabled per repository, so situational skills cost nothing in unrelated sessions.
+
+| Plugin | Contents | Enabled |
+| --- | --- | --- |
+| `laravel-lsp` | The Laravel language server, see [Code Intelligence](#code-intelligence) | Globally |
+| `marketing` | 29 marketing, CRO, and SEO skills | Off by default (`defaultEnabled: false`) |
+
+To enable one in a repository, add it to that repo's `.claude/settings.json`:
+
+```json
+{
+  "enabledPlugins": {
+    "laravel-lsp@dotfiles-skills": true
+  }
+}
+```
+
+A new plugin directory also needs an entry in `marketplace.json` before it can be enabled. Project-scope plugins only load from the directory you launch from, so start the CLI at the repository root.
 
 ### Settings (`config/claude/settings.json`)
 
@@ -413,11 +462,13 @@ Three language servers give the agent diagnostics after every edit and real symb
 
 | Server | Provides | Install |
 | --- | --- | --- |
-| `laravel-lsp@skills-dir` | Route names, view paths, translation strings, middleware aliases, and container bindings, in `.blade.php` | `composer global require laravel/lsp` |
+| `laravel-lsp@dotfiles-skills` | Config keys, route names, view paths, translation strings, middleware aliases, and container bindings, in `.blade.php` | `composer global require laravel/lsp` |
 | `php-lsp` | PHP types, symbols, references, signatures | `npm i -g intelephense` |
 | `typescript-lsp` | TypeScript and TSX intelligence | `npm i -g typescript-language-server typescript` |
 
-Claude Code registers one server per file extension, so the two PHP servers split the work: Intelephense takes `.php` for types, undefined methods, and references, and Laravel LSP takes `.blade.php` for route names, view paths, and translation strings.
+Laravel LSP is first-party and has no official Claude plugin, so `skills/laravel-lsp/` wraps it in a small `.lsp.json`. Its `phpEnvironment` defaults to `auto`, which finds Herd and Valet without configuration.
+
+Claude Code registers **one server per file extension**, so the two PHP servers split the work: Intelephense takes `.php` for types, undefined methods, and references, and Laravel LSP takes `.blade.php` for route names, view paths, and translation strings. To flip that priority, disable `php-lsp` and add `".php"` to `skills/laravel-lsp/.lsp.json`.
 
 ### The Review Workflow
 
@@ -448,7 +499,11 @@ bin/install-agent-skill-sync
 
 The script links every directory with a top-level `SKILL.md` and installs a per-user macOS LaunchAgent (`dev.maticvertacnik.agent-skill-sync`) so no manual command is needed when adding skills. It runs at login, watches the source directory, and checks every 60 seconds for changes inside existing folders. Removed or renamed skills have their old managed links cleaned up. `bin/install-claude-code` installs this job automatically on new machines.
 
+Edits to an already linked skill are shared immediately. Existing installations with the same directory name are moved to `~/.agents/backups/link-agent-skills.*` before linking, and unrelated skills are left alone. Repeated runs leave correct links untouched.
+
 To run a check immediately without waiting on the background job, use `bin/link-agent-skills`. Background errors go to `~/Library/Logs/dev.maticvertacnik.agent-skill-sync.log`.
+
+In Codex, invoke skills with a `$` prefix, for example `$review-code` or `$review-pr`. If a newly linked skill does not appear, restart Codex.
 
 ---
 
@@ -505,13 +560,13 @@ Variables load when you enter the directory and unload when you leave.
 The `bin/` directory contains helper scripts:
 
 - **install** - Main installation script (idempotent, safe to re-run)
-- **install-claude-code** - Standalone Claude Code installer
+- **install-claude-code** - Standalone installer for the AI setup: the CLI, the symlinks, and the Codex links
 - **link-agent-skills** - Symlink the harness-neutral skills and `AGENTS.md` into Codex, leaving Codex's own built-in skills alone
 - **install-agent-skill-sync** - Install the macOS background job that keeps shared skill links current automatically
 - **update** - Update dotfiles, Homebrew, npm, and Composer packages
 - **doctor** - Health check and diagnostic tool
 - **conductor-merge** - Fast-forward the current Conductor workspace branch into `main` (which lives in another git worktree). Use `--push` to also push `main` to `origin`, which clears Conductor's "Changes" view (it diffs against `origin/main`).
-- **exclude-from-spotlight** - Marks data-heavy directories (e.g. local databases) as never indexed by Spotlight
+- **exclude-from-spotlight** - Drops a `.metadata_never_index` marker into data-heavy directories (e.g. local databases) so Spotlight skips them. Their constantly rewritten files would otherwise keep `mds_stores` busy indefinitely
 
 ---
 
