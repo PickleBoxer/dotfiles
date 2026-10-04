@@ -11,3 +11,4 @@ home/.yarnrc
 
 # Auto-synced Claude skills (managed by Claude Code, not version controlled)
 config/claude/skills/synced/
+config/claude/skills/.trash/

@@ -116,7 +116,8 @@
     "commit-commands@claude-plugins-official": false,
     "frontend-design@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
-    "laravel-lsp@dotfiles-skills": true
+    "laravel-lsp@dotfiles-skills": true,
+    "peek@peek": true
   },
   "extraKnownMarketplaces": {
     "swift-architecture-skill": {
@@ -148,6 +149,12 @@
         "source": "directory",
         "path": "/Users/maticvertacnik/.dotfiles/config/claude/skills"
       }
+    },
+    "peek": {
+      "source": {
+        "source": "github",
+        "repo": "PickleBoxer/peek"
+      }
     }
   },
   "feedbackDrafts": "off",
@@ -160,11 +167,17 @@
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
   "fastMode": true,
+  "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
   "pluginConfigs": {
     "agents-md@builtin": {
       "options": {
         "instructionFiles": "claude-md-or-agents-md"
+      }
+    },
+    "burn@inline": {
+      "options": {
+        "terminalIcons": "nerd"
       }
     }
   },
@@ -173,6 +186,7 @@
   "theme": "dark",
   "editorMode": "normal",
   "verbose": true,
+  "autoCompactEnabled": true,
   "switchModelsOnFlag": true,
   "autoContinueAtUsageLimit": false,
   "inputNeededNotifEnabled": true,
