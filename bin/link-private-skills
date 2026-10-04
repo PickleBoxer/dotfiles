@@ -1,0 +1,48 @@
+#!/bin/bash
+# Link private skills from ~/.dotfiles-custom into the public skills directory.
+# Each link is listed in .git/info/exclude, so it loads like any skill but is never committed.
+
+set -euo pipefail
+
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
+CUSTOM_DIR="${DOTFILES_CUSTOM_DIR:-$HOME/.dotfiles-custom}"
+PRIVATE="$CUSTOM_DIR/claude/skills"
+TARGET="$DOTFILES_DIR/config/claude/skills"
+EXCLUDE="$(git -C "$DOTFILES_DIR" rev-parse --path-format=absolute --git-path info/exclude)"
+
+mkdir -p "$(dirname "$EXCLUDE")"
+touch "$EXCLUDE"
+
+# Remove only our own links when a private skill is removed or renamed.
+for target in "$TARGET"/*; do
+    [ -L "$target" ] || continue
+    case "$(readlink "$target")" in
+        "$PRIVATE"/*) ;;
+        *) continue ;;
+    esac
+    [ -e "$target" ] && continue
+    skill="$(basename "$target")"
+    rm "$target"
+    grep -vxF "/config/claude/skills/$skill" "$EXCLUDE" > "$EXCLUDE.tmp" || true
+    mv "$EXCLUDE.tmp" "$EXCLUDE"
+    echo "Removed stale private skill link $skill"
+done
+
+[ -d "$PRIVATE" ] || exit 0
+
+linked=0
+for entry in "$PRIVATE"/*; do
+    [ -f "$entry/SKILL.md" ] || [ -f "$entry/.claude-plugin/plugin.json" ] || continue
+    skill="$(basename "$entry")"
+    target="$TARGET/$skill"
+    if [ -e "$target" ] && [ "$(readlink "$target")" != "$entry" ]; then
+        echo "Skipping private skill $skill: $target already exists" >&2
+        continue
+    fi
+    # No trailing slash, so the pattern matches the symlink itself.
+    grep -qxF "/config/claude/skills/$skill" "$EXCLUDE" || echo "/config/claude/skills/$skill" >> "$EXCLUDE"
+    [ -L "$target" ] || ln -s "$entry" "$target"
+    linked=$((linked + 1))
+done
+
+echo "Linked $linked private skills into $TARGET"

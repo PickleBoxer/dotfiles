@@ -35,6 +35,11 @@ fi
 
 mkdir -p "$SHARED_SKILLS" "$CODEX_DIR"
 
+# Pull in private skills first, so they are shared like the public ones.
+if [ -x "$DOTFILES_DIR/bin/link-private-skills" ]; then
+    DOTFILES_DIR="$DOTFILES_DIR" "$DOTFILES_DIR/bin/link-private-skills"
+fi
+
 # Remove only our own links when a source skill is removed or renamed.
 for target in "$SHARED_SKILLS"/*; do
     [ -L "$target" ] || continue

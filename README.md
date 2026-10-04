@@ -37,7 +37,7 @@ Personal dotfiles with modern shell tooling, optimized for Laravel/PHP developme
 
 **Everything else**
 
-- [Customization](#customization) - [Personal Aliases & Functions](#personal-aliases--functions) · [Project-Specific Variables](#project-specific-variables)
+- [Customization](#customization) - [Personal Aliases & Functions](#personal-aliases--functions) · [Private Skills](#private-skills) · [Project-Specific Variables](#project-specific-variables)
 - [Post-Installation](#post-installation) · [Tool Comparisons](#tool-comparisons) · [Utilities](#utilities) · [Syncing Changes from Upstream](#syncing-changes-from-upstream-freekmurzedotfiles) · [Credits](#credits)
 
 ---
@@ -67,9 +67,12 @@ This generates an `ed25519` SSH key, configures `~/.ssh/config`, adds it to the 
 
 ```bash
 git clone git@github.com:PickleBoxer/dotfiles.git ~/.dotfiles
+git clone git@github.com:PickleBoxer/dotfiles-custom.git ~/.dotfiles-custom   # private, optional
 cd ~/.dotfiles
 bin/install
 ```
+
+Clone `dotfiles-custom` before running the installer, so private skills and shell settings are linked on the first run. Cloning it later also works, since the agent-skill-sync job picks it up within a minute. See [Private Skills](#private-skills).
 
 ---
 
@@ -520,6 +523,29 @@ vim ~/.dotfiles-custom/shell/.aliases
 
 These files are automatically loaded by `.zshrc` if they exist.
 
+### Private Skills
+
+Skills that should not be published live in the private [PickleBoxer/dotfiles-custom](https://github.com/PickleBoxer/dotfiles-custom) repo, cloned to `~/.dotfiles-custom`:
+
+```
+~/.dotfiles-custom/
+├── claude/skills/<name>/SKILL.md   private skills
+└── shell/                          private .exports, .aliases, .functions, .zshrc
+```
+
+`bin/link-private-skills` symlinks each private skill into `config/claude/skills/` and adds it to this repo's `.git/info/exclude`, so Claude Code and Codex load it like any other skill while git never sees it. Unlike `.gitignore`, the exclude file is local and never committed, so private skill names stay private and nothing conflicts with upstream.
+
+It runs as the first step of `bin/link-agent-skills`, so the agent-skill-sync job keeps private links current too. Removed private skills have their links cleaned up, and a private skill never replaces a tracked skill with the same name.
+
+To add one:
+
+```bash
+mkdir -p ~/.dotfiles-custom/claude/skills/my-skill
+vim ~/.dotfiles-custom/claude/skills/my-skill/SKILL.md
+~/.dotfiles/bin/link-private-skills   # or wait up to a minute
+cd ~/.dotfiles-custom && git add -A && git commit -m "feat(skills): add my-skill" && git push
+```
+
 ### Project-Specific Variables
 
 Use `direnv` for automatic environment loading:
@@ -562,6 +588,7 @@ The `bin/` directory contains helper scripts:
 - **install** - Main installation script (idempotent, safe to re-run)
 - **install-claude-code** - Standalone installer for the AI setup: the CLI, the symlinks, and the Codex links
 - **link-agent-skills** - Symlink the harness-neutral skills and `AGENTS.md` into Codex, leaving Codex's own built-in skills alone
+- **link-private-skills** - Symlink private skills from `~/.dotfiles-custom` into `config/claude/skills/`, excluded from git
 - **install-agent-skill-sync** - Install the macOS background job that keeps shared skill links current automatically
 - **update** - Update dotfiles, Homebrew, npm, and Composer packages
 - **doctor** - Health check and diagnostic tool
