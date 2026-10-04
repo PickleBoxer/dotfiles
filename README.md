@@ -17,7 +17,7 @@ Personal dotfiles with modern shell tooling, optimized for Laravel/PHP developme
 **Reference**
 
 - [How It Works](#how-it-works) - [Symlinked Files](#symlinked-files) · [Sourced Files](#sourced-files) · [Starship Prompt](#starship-prompt) · [Conductor Terminal Support](#conductor-terminal-support)
-- [Daily Usage](#daily-usage) - [Smart Navigation](#smart-navigation) · [Laravel/PHP Shortcuts](#laravelphp-shortcuts) · [Data Processing](#data-processing) · [Maintenance Commands](#maintenance-commands) · [Syncing Changes from Upstream](#syncing-changes-from-upstream-freekmurzedotfiles)
+- [Daily Usage](#daily-usage) - [Smart Navigation](#smart-navigation) · [Laravel/PHP Shortcuts](#laravelphp-shortcuts) · [Data Processing](#data-processing) · [Maintenance Commands](#maintenance-commands)
 - [Version Management](#version-management) - [Node.js via fnm](#nodejs-via-fnm) · [PHP & Composer via Homebrew](#php--composer-via-homebrew) · [DDEV vs Valet](#local-development-ddev-vs-valet)
 - [Package Management](#package-management) - the Brewfile and global npm and Composer packages
 - [DDEV SSH Commit Signing](#ddev-ssh-commit-signing)
@@ -37,7 +37,7 @@ Personal dotfiles with modern shell tooling, optimized for Laravel/PHP developme
 **Everything else**
 
 - [Customization](#customization) - [Personal Aliases & Functions](#personal-aliases--functions) · [Project-Specific Variables](#project-specific-variables)
-- [Post-Installation](#post-installation) · [Tool Comparisons](#tool-comparisons) · [Utilities](#utilities) · [Credits](#credits)
+- [Post-Installation](#post-installation) · [Tool Comparisons](#tool-comparisons) · [Utilities](#utilities) · [Syncing Changes from Upstream](#syncing-changes-from-upstream-freekmurzedotfiles) · [Credits](#credits)
 
 ---
 
@@ -205,38 +205,6 @@ btm                 # Modern system monitor (aliased from top/htop)
 
 ```bash
 bin/update          # Update all packages and tools
-```
-
-### Syncing Changes from Upstream (freekmurze/dotfiles)
-
-This repo is forked from [freekmurze/dotfiles](https://github.com/freekmurze/dotfiles). To check and selectively apply upstream changes:
-
-**1. Check what is new:**
-
-```bash
-cd ~/.dotfiles
-git fetch upstream
-git log upstream-synced..upstream/main --format="%h %ci %s"
-```
-
-Empty output means you are fully up to date.
-
-**2. Inspect a specific commit:**
-
-```bash
-git show <commit-hash> --stat
-```
-
-**3. Cherry-pick files you want from upstream:**
-
-```bash
-git checkout upstream/main -- path/to/file-or-folder
-```
-
-**4. Mark as synced after applying changes:**
-
-```bash
-git tag -f upstream-synced upstream/main
 ```
 
 ---
@@ -544,6 +512,76 @@ The `bin/` directory contains helper scripts:
 - **doctor** - Health check and diagnostic tool
 - **conductor-merge** - Fast-forward the current Conductor workspace branch into `main` (which lives in another git worktree). Use `--push` to also push `main` to `origin`, which clears Conductor's "Changes" view (it diffs against `origin/main`).
 - **exclude-from-spotlight** - Marks data-heavy directories (e.g. local databases) as never indexed by Spotlight
+
+---
+
+## Syncing Changes from Upstream (freekmurze/dotfiles)
+
+This repo is forked from [freekmurze/dotfiles](https://github.com/freekmurze/dotfiles). `main` is the customized version and upstream changes are merged into it, so the merge commits record exactly which upstream commits are already handled.
+
+```
+upstream/main   read-only mirror of freekmurze/dotfiles (updated by git fetch)
+main            customized version, merges upstream/main in
+sync/upstream   short-lived branch for testing a merge
+```
+
+**One-time setup (per clone):**
+
+```bash
+cd ~/.dotfiles
+git remote add upstream git@github.com:freekmurze/dotfiles.git
+git remote set-url --push upstream no_push   # never push to upstream by accident
+git config rerere.enabled true               # remember conflict resolutions
+git config merge.conflictStyle zdiff3        # show the common ancestor in conflicts
+```
+
+**1. Check what is new:**
+
+```bash
+git fetch upstream
+git log --oneline main..upstream/main
+```
+
+Empty output means you are fully up to date. Use `git show <hash> --stat` to inspect a commit.
+
+**2. Merge on a throwaway branch:**
+
+```bash
+git switch -c sync/upstream main
+git merge upstream/main
+```
+
+Resolve conflicts, then reload the shell and check that everything still works.
+
+**3. Skip upstream commits you don't want (optional):**
+
+Merge up to the commit before the unwanted one, then record the unwanted commit as handled without taking its changes:
+
+```bash
+git merge <hash-before-unwanted>
+git merge -s ours <unwanted-hash> -m "chore(upstream): skip <reason>"
+```
+
+Alternatively merge everything and `git revert` the parts you don't want.
+
+**4. Fast-forward main and clean up:**
+
+```bash
+git switch main
+git merge --ff-only sync/upstream
+git branch -d sync/upstream
+git push origin main
+```
+
+**Useful queries:**
+
+```bash
+git log --oneline main..upstream/main              # upstream commits not merged yet
+git log --oneline --no-merges upstream/main..main  # your customizations
+git log --oneline --first-parent main              # your timeline, one line per sync
+```
+
+Keep personal changes in files upstream never touches (see [Customization](#customization)) to keep conflicts rare.
 
 ---
 
