@@ -97,10 +97,6 @@
   "disableRemoteControl": true,
   "disableWorkflows": true,
   "disableArtifact": true,
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh"
-  },
   "enabledPlugins": {
     "php-lsp@claude-plugins-official": true,
     "swift-lsp@claude-plugins-official": true,

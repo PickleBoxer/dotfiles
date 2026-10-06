@@ -53,7 +53,6 @@ if [ -d "$DOTFILES_DIR/config/claude" ]; then
     # Claude Code and Codex both read AGENTS.md natively. One file, both harnesses.
     ln -sf "$DOTFILES_DIR/config/claude/AGENTS.md" ~/.claude/AGENTS.md
     ln -sf "$DOTFILES_DIR/config/claude/settings.json" ~/.claude/settings.json
-    ln -sf "$DOTFILES_DIR/config/claude/statusline.sh" ~/.claude/statusline.sh
 
     # Symlink entire skills directory
     rm -rf ~/.claude/skills

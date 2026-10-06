@@ -128,7 +128,6 @@ The installation creates symlinks from your home directory to the dotfiles repos
 | `~/.claude/rules`                     | `~/.dotfiles/config/claude/rules/`                    | All Claude Code rules (version-controlled)            |
 | `~/.claude/AGENTS.md`                 | `~/.dotfiles/config/claude/AGENTS.md`                 | Claude Code configuration (shared with Codex, both read AGENTS.md natively) |
 | `~/.claude/settings.json`             | `~/.dotfiles/config/claude/settings.json`             | Claude Code settings                                   |
-| `~/.claude/statusline.sh`             | `~/.dotfiles/config/claude/statusline.sh`             | Claude Code status line script                         |
 | `~/.codex/AGENTS.md`                  | `~/.dotfiles/config/claude/AGENTS.md`                 | The same instructions, read natively by Codex          |
 | `~/.agents/skills/*`                  | `~/.dotfiles/config/claude/skills/*`                  | One symlink per shared skill, discovered by Codex. See `bin/link-agent-skills` |
 | `~/.config/ghostty/config`            | `~/.dotfiles/config/ghostty/config`                   | Ghostty terminal settings                              |
@@ -305,7 +304,6 @@ Everything the agents need lives in `config/claude/`, and both Claude Code and C
 config/claude/
 ├── AGENTS.md          the instructions, read by both harnesses
 ├── settings.json      Claude Code settings, permissions, hooks
-├── statusline.sh      the status line script
 ├── rules/             always-loaded rules (commit conventions)
 ├── agents/            custom subagents
 └── skills/            23 skills, plus 2 bundled plugins
