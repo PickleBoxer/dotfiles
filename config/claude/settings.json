@@ -117,7 +117,10 @@
     "frontend-design@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
     "laravel-lsp@dotfiles-skills": true,
-    "peek@peek": true
+    "peek@peek": true,
+    "drift@drift": true,
+    "burn@burn": true,
+    "mattpocock-skills@mattpocock": true
   },
   "extraKnownMarketplaces": {
     "swift-architecture-skill": {
@@ -155,6 +158,18 @@
         "source": "github",
         "repo": "PickleBoxer/peek"
       }
+    },
+    "drift": {
+      "source": {
+        "source": "github",
+        "repo": "PickleBoxer/drift"
+      }
+    },
+    "burn": {
+      "source": {
+        "source": "github",
+        "repo": "PickleBoxer/burn"
+      }
     }
   },
   "feedbackDrafts": "off",
@@ -175,7 +190,12 @@
         "instructionFiles": "claude-md-or-agents-md"
       }
     },
-    "burn@inline": {
+    "drift@drift": {
+      "options": {
+        "terminalIcons": "nerd"
+      }
+    },
+    "burn@burn": {
       "options": {
         "terminalIcons": "nerd"
       }
