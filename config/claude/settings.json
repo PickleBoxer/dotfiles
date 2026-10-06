@@ -105,7 +105,6 @@
     "pr-review-toolkit@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
     "laravel@laravel": true,
-    "mattpocock-skills@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": false,
     "claude-md-management@claude-plugins-official": false,
     "code-simplifier@claude-plugins-official": false,
@@ -113,10 +112,11 @@
     "frontend-design@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
     "laravel-lsp@dotfiles-skills": true,
-    "peek@peek": true,
-    "drift@drift": true,
-    "burn@burn": true,
-    "mattpocock-skills@mattpocock": true
+    "html-plan@claude-community": true,
+    "mattpocock-skills@mattpocock": true,
+    "burn@pickleboxer": true,
+    "drift@pickleboxer": true,
+    "peek@pickleboxer": true
   },
   "extraKnownMarketplaces": {
     "swift-architecture-skill": {
@@ -149,23 +149,25 @@
         "path": "/Users/maticvertacnik/.dotfiles/config/claude/skills"
       }
     },
-    "peek": {
+    "claude-community": {
       "source": {
         "source": "github",
-        "repo": "PickleBoxer/peek"
+        "repo": "anthropics/claude-plugins-community"
       }
     },
-    "drift": {
+    "mattpocock": {
       "source": {
         "source": "github",
-        "repo": "PickleBoxer/drift"
-      }
+        "repo": "mattpocock/skills"
+      },
+      "autoUpdate": true
     },
-    "burn": {
+    "pickleboxer": {
       "source": {
         "source": "github",
-        "repo": "PickleBoxer/burn"
-      }
+        "repo": "PickleBoxer/claude-plugins"
+      },
+      "autoUpdate": true
     }
   },
   "feedbackDrafts": "off",
@@ -186,12 +188,12 @@
         "instructionFiles": "claude-md-or-agents-md"
       }
     },
-    "drift@drift": {
+    "burn@pickleboxer": {
       "options": {
         "terminalIcons": "nerd"
       }
     },
-    "burn@burn": {
+    "drift@pickleboxer": {
       "options": {
         "terminalIcons": "nerd"
       }
