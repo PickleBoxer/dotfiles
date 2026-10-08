@@ -57,20 +57,11 @@
       "mcp__chrome-devtools__*"
     ],
     "deny": [
-      "EnterPlanMode",
-      "ExitPlanMode",
       "DesignSync",
       "NotebookEdit",
       "SendMessage",
       "PushNotification",
-      "RemoteTrigger",
-      "ReportFindings",
-      "ScheduleWakeup",
-      "CronCreate",
-      "CronDelete",
-      "CronList",
-      "Bash(git commit)",
-      "Bash(git commit *)"
+      "RemoteTrigger"
     ],
     "ask": [
       "Read(~/.ssh/**)",
@@ -78,7 +69,9 @@
       "Read(~/.claude/.credentials.json)",
       "Read(~/.codex/config.toml)",
       "Read(**/.env)",
-      "Read(**/.env.*)"
+      "Read(**/.env.*)",
+      "Bash(git commit)",
+      "Bash(git commit *)"
     ],
     "defaultMode": "auto"
   },
