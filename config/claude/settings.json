@@ -57,11 +57,18 @@
       "mcp__chrome-devtools__*"
     ],
     "deny": [
+      "EnterPlanMode",
+      "ExitPlanMode",
       "DesignSync",
       "NotebookEdit",
       "SendMessage",
       "PushNotification",
-      "RemoteTrigger"
+      "RemoteTrigger",
+      "ReportFindings",
+      "ScheduleWakeup",
+      "CronCreate",
+      "CronDelete",
+      "CronList"
     ],
     "ask": [
       "Read(~/.ssh/**)",
@@ -109,8 +116,7 @@
     "mattpocock-skills@mattpocock": true,
     "burn@pickleboxer": true,
     "drift@pickleboxer": true,
-    "peek@pickleboxer": true,
-    "pstack@pickleboxer": true
+    "peek@pickleboxer": true
   },
   "extraKnownMarketplaces": {
     "swift-architecture-skill": {
