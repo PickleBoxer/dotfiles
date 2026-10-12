@@ -454,6 +454,28 @@ All custom agents are stored in `config/claude/agents/` and version-controlled w
 **Custom Agents:**
 
 - `laravel-feature-builder` - Implements new features in Laravel applications (models, controllers, migrations, routes, views)
+- `Explore` - Replaces the built-in Explore (which runs on the main model) with a read-only Haiku agent that prefers LSP over grep for symbols
+- `researcher` - Read-only Haiku agent for docs, changelogs, and web lookups, returns findings with source URLs
+
+The main session stays on Opus and delegates search and research to the cheaper Haiku agents, picked by their `description`. Only short summaries come back, so raw search output stays out of the main context.
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  MAIN SESSION  (Opus, medium effort)                     │
+│  owns the plan, edits, tests, final answer               │
+└──────┬─────────────────────────────────┬─────────────────┘
+       │  delegates when the task matches the description
+       ▼                                 ▼
+┌──────────────────────┐        ┌──────────────────────────┐
+│ Explore              │        │ researcher               │
+│ haiku, read-only     │        │ haiku, read-only + web   │
+│ LSP, Read, Grep,     │        │ WebFetch, WebSearch,     │
+│ Glob                 │        │ Read, Grep, Glob         │
+└──────────┬───────────┘        └────────────┬─────────────┘
+           └──── file:line refs / sourced findings back ────┘
+```
+
+Opus can still pass `model: "opus"` for a single call when a search needs judgment, since the per-call model overrides the agent's frontmatter.
 
 Most PHP simplification now happens through the `laravel-simplifier:laravel-simplifier` agent, from the `laravel@laravel` plugin marketplace enabled in `enabledPlugins`, rather than a custom agent in this repo. It's lane 2 of the review workflow below.
 

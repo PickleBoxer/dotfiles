@@ -179,7 +179,7 @@
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
-  "fastMode": true,
+  "fastMode": false,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
   "pluginConfigs": {
