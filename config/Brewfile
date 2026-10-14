@@ -29,7 +29,6 @@ tap "shivammathur/extensions"
 cask "phpmon"
 cask "stats"
 brew "oven-sh/bun/bun"
-cask "rectangle"
 
 # Apps
 cask "google-chrome"
