@@ -235,6 +235,9 @@ defaults write com.apple.dock mru-spaces -bool false
 # Make Dock icons of hidden applications translucent
 defaults write com.apple.dock showhidden -bool true
 
+# Click wallpaper to reveal desktop
+defaults write com.apple.WindowManager EnableStandardClickToShowDesktop -bool true
+
 success "Dock configured"
 
 ###############################################################################
@@ -313,7 +316,7 @@ success "Messages configured"
 step "Restarting affected applications"
 
 for app in "Activity Monitor" "Calendar" "Contacts" "cfprefsd" \
-	"Dock" "Finder" "Mail" "Messages" "Safari" "SystemUIServer"; do
+	"Dock" "Finder" "Mail" "Messages" "Safari" "SystemUIServer" "WindowManager"; do
 	killall "${app}" &> /dev/null || true
 done
 
