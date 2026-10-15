@@ -16,10 +16,6 @@ Don't overuse emoji.
 
 5. I'm always open to ideas on better ways to do things. Please don't hesitate to suggest a better way, or one that has long lasting impact over a tactical change. (as a few examples)
 
-## Writing
-
-Never use em dashes (—) or en dashes (–) as punctuation. Rephrase with periods, commas, or parentheses. Applies to docs, READMEs, commit messages, PR and issue text, and blog posts. Hyphens in compound words are fine.
-
 ## Code
 
 For Laravel and PHP work, always use the spatie-guidelines skill.
