@@ -306,7 +306,7 @@ config/claude/
 ├── settings.json      Claude Code settings, permissions, hooks
 ├── rules/             always-loaded rules (commit conventions)
 ├── agents/            custom subagents
-└── skills/            23 skills, plus 2 bundled plugins
+└── skills/            10 skills, plus 2 bundled plugins
 ```
 
 ### Quick Install (Standalone)
@@ -340,29 +340,13 @@ All skills are stored in `config/claude/skills/` and version-controlled with you
 **Code quality / review:**
 
 - `audit-architecture` - Read-only, multi-agent architecture audit (data structures, state, control flow)
-- `audit-codebase` - Read-only codebase-wide simplification audit
-- `refactor` - Surgical refactoring without behavior change
-- `refactor-plan` - Plan a multi-file refactor before executing it
 - `review-code` - Review changed code against project conventions
 - `review-pr` - Review and merge GitHub PRs for Spatie packages
-- `explain-changes` - Explain a branch's changes as an HTML walkthrough
 - `test-audit` - Authoring gate for new tests, plus an audit workflow for low-value or duplicative tests
 
-**Frontend:**
+**Tools:**
 
-- `frontend-design` - Distinctive, intentional visual/UI design guidance
-- `web-design-guidelines` - Review UI code against Web Interface Guidelines
-- `vercel-react-best-practices` - React/Next.js performance patterns from Vercel Engineering
-- `typescript-advanced-types` - Advanced TypeScript type system patterns
-
-**Tools & integrations:**
-
-- `chrome-devtools` - Browser automation/debugging via Chrome DevTools MCP
-- `conductor` - Manage Conductor.build parallel-agent workspaces and sessions
-- `sentry-cli` - Sentry CLI for issues, events, and projects
-- `mailcoach` - Manage Mailcoach email marketing via CLI
 - `code-snippet-images` - Generate code screenshot images for social/docs
-- `find-skills` - Discover and install new agent skills
 
 **Marketing** (bundled plugin, `config/claude/skills/marketing/`, disabled by default):
 
@@ -445,7 +429,7 @@ Settings from these files merge (project-level list entries add to user-level on
 
 That's the real pattern used for the Swift plugins registered in `extraKnownMarketplaces` (`swift-architecture-skill`, `swift-concurrency-agent-skill`, `swiftui-agent-skill`, `swift-testing-agent-skill`): they stay off in `enabledPlugins` globally, and get turned on per repo where they're actually relevant.
 
-`skillOverrides` only affects loose skills (the ones directly under `config/claude/skills/`, like `sentry-cli` or `conductor`). Plugin-bundled skills (like `marketing`, which ships its own `.claude-plugin/plugin.json`) are controlled via `enabledPlugins` instead, `skillOverrides` doesn't apply to them.
+`skillOverrides` only affects loose skills (the ones directly under `config/claude/skills/`, like `review-code` or `test-audit`). Plugin-bundled skills (like `marketing`, which ships its own `.claude-plugin/plugin.json`) are controlled via `enabledPlugins` instead, `skillOverrides` doesn't apply to them.
 
 ### Agents (Version Controlled)
 
