@@ -3,676 +3,411 @@
 ![Terminal](images/terminal.jpeg)
 
 [![skills.sh](https://skills.sh/b/PickleBoxer/dotfiles)](https://skills.sh/PickleBoxer/dotfiles)
+![macOS](https://img.shields.io/badge/macOS-only-black?logo=apple)
+![Shell](https://img.shields.io/badge/shell-zsh%20%2B%20starship-blue)
+![Forked from](https://img.shields.io/badge/fork-freekmurze%2Fdotfiles-lightgrey)
 
-Personal dotfiles with modern shell tooling, optimized for Laravel/PHP development. Features fast startup times, smart directory navigation, and modern CLI tools.
+macOS dotfiles for Laravel/PHP work: fast Rust CLI tools, a Starship prompt, and one shared AI setup for **Claude Code** and **Codex**.
 
-## Contents
-
-**Getting started**
-
-- [Key Features](#key-features)
-- [Quick Start](#quick-start) - SSH key, then clone and run `bin/install`
-- [What's Included](#whats-included) - [Shell & Prompt](#shell--prompt) · [Modern CLI Tools](#modern-cli-tools) · [Development Tools](#development-tools) · [QuickLook Plugins](#quicklook-plugins)
-
-**Reference**
-
-- [How It Works](#how-it-works) - [Symlinked Files](#symlinked-files) · [Sourced Files](#sourced-files) · [Starship Prompt](#starship-prompt) · [Conductor Terminal Support](#conductor-terminal-support)
-- [Daily Usage](#daily-usage) - [Smart Navigation](#smart-navigation) · [Laravel/PHP Shortcuts](#laravelphp-shortcuts) · [Data Processing](#data-processing) · [Maintenance Commands](#maintenance-commands)
-- [Version Management](#version-management) - [Node.js via fnm](#nodejs-via-fnm) · [PHP & Composer via Homebrew](#php--composer-via-homebrew) · [DDEV vs Valet](#local-development-ddev-vs-valet)
-- [Package Management](#package-management) - the Brewfile and global npm and Composer packages
-- [DDEV SSH Commit Signing](#ddev-ssh-commit-signing)
-
-**AI setup**
-
-- [Claude Code Integration](#claude-code-integration) - one config for Claude Code and Codex
-  - [Quick Install (Standalone)](#quick-install-standalone) - the AI setup without the rest of the dotfiles
-  - [Skills](#skills-version-controlled) - grouped by purpose
-  - [Adding New Skills](#adding-new-skills)
-  - [Bundled Plugins](#bundled-plugins) - local plugin marketplace, enabled per repo
-  - [Settings](#settings-configclaudesettingsjson) - including per-project scoping
-  - [Agents](#agents-version-controlled) - custom subagents
-  - [Code Intelligence](#code-intelligence) - Laravel LSP, Intelephense, TypeScript
-  - [The Review Workflow](#the-review-workflow) - the six lanes behind `review-code` and `review-pr`
-  - [Sharing With Codex](#sharing-with-codex) - how one source feeds both harnesses
-
-**Everything else**
-
-- [Customization](#customization) - [Personal Aliases & Functions](#personal-aliases--functions) · [Private Skills](#private-skills) · [Project-Specific Variables](#project-specific-variables)
-- [Post-Installation](#post-installation) · [Tool Comparisons](#tool-comparisons) · [Utilities](#utilities) · [Syncing Changes from Upstream](#syncing-changes-from-upstream-freekmurzedotfiles) · [Credits](#credits)
+**[Install](#install)** · **[Shell](#shell)** · **[Daily use](#daily-use)** · **[Dev stack](#dev-stack)** · **[AI setup](#ai-setup)** · **[Customize](#customize)** · **[Maintain](#maintain)**
 
 ---
 
-## Key Features
-
-- **Starship Prompt** - Fast, cross-shell prompt with Powerline style (configured via `config/starship.toml`)
-- **Version-Controlled Skills & Agents** - All Claude Code skills and agents synced via dotfiles
-- **Framework-Aware Code Intelligence** - Laravel LSP, Intelephense, and TypeScript language servers wired into the agent
-- **Fast Tools** - fnm, zoxide, ripgrep, bat, eza (all Rust-based for speed)
-- **Nerd Fonts** - Installed automatically via Brewfile for perfect icon support
-- **One Command Install** - `bin/install` sets up everything including Claude Code
-
----
-
-## Quick Start
-
-### 1. SSH Key (if you don't have one yet)
+## Install
 
 ```bash
+# 1. SSH key (skip if you have one): creates ed25519, adds to keychain, copies pubkey
 curl -fsSL https://raw.githubusercontent.com/PickleBoxer/dotfiles/main/ssh.sh | sh -s your@email.com
-```
 
-This generates an `ed25519` SSH key, configures `~/.ssh/config`, adds it to the keychain, and copies the public key to your clipboard so you can paste it into [GitHub SSH settings](https://github.com/settings/ssh/new).
-
-### 2. Install dotfiles
-
-```bash
+# 2. Clone and install (idempotent, safe to re-run)
 git clone git@github.com:PickleBoxer/dotfiles.git ~/.dotfiles
 git clone git@github.com:PickleBoxer/dotfiles-custom.git ~/.dotfiles-custom   # private, optional
-cd ~/.dotfiles
-bin/install
+cd ~/.dotfiles && bin/install
 ```
 
-Clone `dotfiles-custom` before running the installer, so private skills and shell settings are linked on the first run. Cloning it later also works, since the agent-skill-sync job picks it up within a minute. See [Private Skills](#private-skills).
+> [!TIP]
+> Clone `dotfiles-custom` **before** `bin/install` so private skills and shell settings link on the first run. Later works too: the sync job picks it up within a minute.
 
----
+> [!NOTE]
+> Paste the copied key into [GitHub SSH settings](https://github.com/settings/ssh/new). Optional afterwards: `mackup restore` to restore app settings.
 
-## What's Included
-
-### Shell & Prompt
-
-- **Starship** - Fast, minimal cross-shell prompt (replaces Oh My Zsh)
-- **zoxide** - Smart directory jumping based on frecency
-- **fzf** - Fuzzy finder for files and history
-- **direnv** - Automatic environment variables per directory
-
-### Modern CLI Tools
-
-- **fnm** - Fast Node.js version manager
-- **bat** - Cat with syntax highlighting
-- **eza** - Modern ls replacement with icons
-- **ripgrep** - Fast grep alternative
-- **fd** - Fast find alternative
-- **git-delta** - Better git diffs
-- **jq** - JSON processor and formatter
-- **yq** - YAML processor and formatter
-- **bottom** - Modern system monitor
-
-### Development Tools
-
-- **PHP** - Latest version via Homebrew
-- **Composer** - Dependency manager via Homebrew
-- **Node.js** - LTS version managed via fnm
-- **DDEV** - Local development environment (Docker-based, used for all projects)
-- **Laravel Valet** - Lightweight alternative for local development (optional, see below)
-
-### QuickLook Plugins
-
-Instant file previews in Finder: code files, markdown, JSON, CSV, patches, and archives.
-
----
-
-## How It Works
-
-### Symlinked Files
-
-The installation creates symlinks from your home directory to the dotfiles repository. This allows you to version control your configuration while keeping files in their expected locations.
-
-| Symlink Location                      | Points To                                             | Purpose                                                |
-| ------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------ |
-| `~/.zshrc`                            | `~/.dotfiles/home/.zshrc`                             | Main Zsh configuration (Starship prompt, no Oh My Zsh) |
-| `~/.gitconfig`                        | `~/.dotfiles/home/.gitconfig`                         | Git configuration with delta diff viewer               |
-| `~/.global-gitignore`                 | `~/.dotfiles/home/.global-gitignore`                  | Global Git ignore patterns                             |
-| `~/.mackup.cfg`                       | `~/.dotfiles/macos/.mackup.cfg`                       | Mackup backup configuration                            |
-| `~/.claude/skills`                    | `~/.dotfiles/config/claude/skills/`                   | All Claude Code skills (version-controlled)            |
-| `~/.claude/agents`                    | `~/.dotfiles/config/claude/agents/`                   | All Claude Code agents (version-controlled)            |
-| `~/.claude/rules`                     | `~/.dotfiles/config/claude/rules/`                    | All Claude Code rules (version-controlled)            |
-| `~/.claude/AGENTS.md`                 | `~/.dotfiles/config/claude/AGENTS.md`                 | Claude Code configuration (shared with Codex, both read AGENTS.md natively) |
-| `~/.claude/settings.json`             | `~/.dotfiles/config/claude/settings.json`             | Claude Code settings                                   |
-| `~/.codex/AGENTS.md`                  | `~/.dotfiles/config/claude/AGENTS.md`                 | The same instructions, read natively by Codex          |
-| `~/.agents/skills/*`                  | `~/.dotfiles/config/claude/skills/*`                  | One symlink per shared skill, discovered by Codex. See `bin/link-agent-skills` |
-| `~/.config/ghostty/config`            | `~/.dotfiles/config/ghostty/config`                   | Ghostty terminal settings                              |
-| `~/.config/ghostty/themes`            | `~/.dotfiles/config/ghostty/themes`                   | Ghostty themes                                         |
-| `~/bin/php-format`                    | `~/.dotfiles/bin/php-format`                          | PHP formatter wrapper                                  |
-| `~/.ddev/homeadditions/.gitconfig`    | `~/.gitconfig`                                        | Git config inside DDEV containers, see [DDEV SSH Commit Signing](#ddev-ssh-commit-signing) |
-| `~/.ddev/homeadditions/.ssh/id_ed25519.pub` | `~/.ssh/id_ed25519.pub`                         | Public signing key inside DDEV containers              |
-
-### Sourced Files
-
-These files are loaded by `.zshrc` but remain in the dotfiles directory:
-
-- `home/.aliases` - Shell command aliases
-- `home/.functions` - Custom shell functions
-- `home/.exports` - Environment variables
-
-### Starship Prompt
-
-The prompt is configured in `config/starship.toml` and uses a Powerline-style agnoster look:
-
-**Features:**
-
-- Powerline arrows for segment separators
-- Git branch and status indicators
-- Error color on non-zero exit codes
-- Requires Nerd Font with powerline glyphs
-
-**Git Status Symbols:**
-
-- `!` - Modified files
-- `+` - Staged changes
-- `?` - Untracked files
-- `✘` - Conflicted files
-
-### Conductor Terminal Support
-
-Conductor's built-in terminal can't render Nerd Font icons or powerline separators. `.zshrc` and `.aliases` detect it automatically (`$__CFBundleIdentifier` / `$CONDUCTOR_INTERNAL_BIN_DIR`) and fall back to plain-text equivalents:
-
-| Context                               | Starship config               | `eza` icons |
-| -------------------------------------- | ------------------------------ | ----------- |
-| Normal terminal (Ghostty, iTerm, ...)  | `config/starship.toml`         | enabled     |
-| Conductor's terminal                   | `config/starship-plain.toml`   | disabled    |
-
-No manual switching needed, it's automatic per-session.
-
----
-
-## Daily Usage
-
-### Smart Navigation
-
-```bash
-z dotfiles          # Jump to frequently used directories
-zi                  # Interactive directory picker
-Ctrl+R              # Fuzzy search command history
-Ctrl+T              # Fuzzy find files
-Alt+C               # Fuzzy change directory
-```
-
-### Laravel/PHP Shortcuts
-
-```bash
-a                   # php artisan
-p                   # Run Pest/PHPUnit tests
-c                   # composer
-mfs                 # php artisan migrate:fresh --seed
-nah                 # git reset --hard; git clean -df
-```
-
-### Data Processing
-
-```bash
-# JSON processing with jq
-curl api.github.com/users/PickleBoxer | jq
-cat composer.json | jq '.require'
-php artisan tinker --execute="echo json_encode(User::first());" | jq
-
-# YAML processing with yq
-yq '.jobs' .github/workflows/ci.yml
-yq -o json docker-compose.yml
-
-# System monitoring
-btm                 # Modern system monitor (aliased from top/htop)
-```
-
-### Maintenance Commands
-
-```bash
-bin/update          # Update all packages and tools
-```
-
----
-
-## Version Management
-
-### Node.js (via fnm)
-
-```bash
-fnm install --lts     # Install latest LTS
-fnm use lts-latest    # Use latest LTS
-fnm install 20        # Install specific version
-fnm use 20            # Switch to specific version
-fnm list              # Show installed versions
-```
-
-### PHP & Composer (via Homebrew)
-
-```bash
-brew upgrade php      # Update PHP to latest
-brew upgrade composer # Update Composer
-```
-
-### Local Development: DDEV vs Valet
-
-This setup uses **DDEV** (Docker-based) as the primary local development environment. It manages PHP versions, databases, and services per-project with zero global config.
-
-**Laravel Valet** is available as a lightweight alternative: faster to start, no Docker required, but shares a single global PHP version. To install:
-
-```bash
-composer global require laravel/valet
-valet install
-```
-
-Both can coexist. DDEV is preferred for projects that need specific PHP versions or services (MySQL, Redis, etc.).
-
----
-
-## Package Management
-
-All Homebrew packages are declared in `config/Brewfile`. To add a new tool:
-
-```bash
-echo 'brew "tree"' >> ~/.dotfiles/config/Brewfile
-brew bundle --file=~/.dotfiles/config/Brewfile
-```
-
-**Complete package list:**
-
-- **Core**: node, php, php@8.4, composer, pkgconf, wget, ncdu, hub, gh, ack, doctl, 1password-cli, git-secret, imagemagick, yarn, ghostscript, mackup, mkcert, bun
-- **Local dev**: ddev, phpmon
-- **Apps**: raycast, ghostty, google-chrome, slack, tableplus, visual-studio-code, dbngin, github, httpie-desktop, imageoptim, tinkerwell, the-unarchiver, vlc
-- **Modern CLI**: starship, zoxide, bat, eza, ripgrep, fd, git-delta, fnm, fzf, direnv, jq, yq, bottom, mas, tree, trash, uv, coreutils, gnu-sed, bash
-- **Zsh**: zsh-autosuggestions, zsh-syntax-highlighting
-- **Fonts**: font-meslo-lg-nerd-font, font-jetbrains-mono, font-jetbrains-mono-nerd-font, font-fira-code, font-fira-code-nerd-font, font-open-sans, font-roboto, font-bitter, font-lato
-- **QuickLook**: qlmarkdown, betterzip, suspicious-package
-- **PHP Extensions** (optional, via `bin/install` prompt): imagick, memcached, xdebug, redis
-- **Global Composer** (optional, via `bin/install` prompt): laravel/pint, laravel/envoy, laravel/installer, spatie/phpunit-watcher
-
----
-
-## DDEV SSH Commit Signing
-
-The install script automatically sets up one-time host configuration so all DDEV containers inherit your git identity and SSH commit signing:
-
-- Symlinks `~/.gitconfig` into `~/.ddev/homeadditions/` so every container picks up your signing config
-- Symlinks `~/.ssh/id_ed25519.pub` into the container's `~/.ssh/` (git needs the public key file present)
-- Adds your SSH key to the host agent
-
-After each reboot, run once to forward the agent into containers:
-
-```bash
-ddev auth ssh
-```
-
-If you also need custom SSH host entries inside containers (e.g. a self-hosted GitLab), add them to `~/.ddev/homeadditions/.ssh/config.d/custom.conf`.
-
----
-
-## Claude Code Integration
-
-Everything the agents need lives in `config/claude/`, and both Claude Code and Codex read it from there. Nothing is duplicated per tool.
-
-```
-config/claude/
-├── AGENTS.md          the instructions, read by both harnesses
-├── settings.json      Claude Code settings, permissions, hooks
-├── rules/             always-loaded rules (commit conventions)
-├── agents/            custom subagents
-└── skills/            10 skills, plus 2 bundled plugins
-```
-
-### Quick Install (Standalone)
-
-Install just Claude Code without the full dotfiles:
+AI setup only, without the rest:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/PickleBoxer/dotfiles/main/bin/install-claude-code | bash
 ```
 
-### What's Included
+---
 
-- **Claude Code CLI** - Installed via Homebrew
-- **Custom configuration** - AGENTS.md with coding guidelines (shared with Codex, read natively by both)
-- **Version-controlled skills** - Entire `~/.claude/skills` directory symlinked to dotfiles
-- **Version-controlled agents** - Entire `~/.claude/agents` directory symlinked to dotfiles
+## Shell
 
-### Skills (Version Controlled)
+| Tool                            | Replaces        | Why                                           |
+| ------------------------------- | --------------- | --------------------------------------------- |
+| [Starship](https://starship.rs) | Oh My Zsh       | Fast Powerline prompt, `config/starship.toml` |
+| zoxide                          | z.sh / autojump | Frecency jumping, Rust speed                  |
+| fzf                             |                 | Fuzzy files, history, dirs                    |
+| direnv                          |                 | Per-directory env vars                        |
+| fnm                             | nvm             | ~40x faster Node switching                    |
+| bat                             | cat             | Syntax highlighting, git integration          |
+| eza                             | ls              | Icons, tree view, git status                  |
+| ripgrep                         | grep            | 5-10x faster, respects `.gitignore`           |
+| fd                              | find            | Simpler syntax, ~10x faster                   |
+| git-delta                       | diff            | Side-by-side, highlighted diffs               |
+| bottom (`btm`)                  | top / htop      | Graphs, better UI                             |
+| jq / yq                         |                 | JSON / YAML processing                        |
 
-All skills are stored in `config/claude/skills/` and version-controlled with your dotfiles. When you run the installer on a new Mac, all skills are immediately available.
+Nerd Fonts install via the Brewfile. QuickLook plugins preview code, markdown, JSON, CSV, patches, and archives in Finder.
 
-**Laravel / PHP:**
+<details>
+<summary><b>Prompt git symbols</b></summary>
 
-- `spatie-guidelines` - Spatie's PHP, Laravel, JS, and Vue coding conventions
-- `spatie-package-skeleton` - Scaffold Spatie-style PHP/Laravel packages
-- `laravel-lsp` - Wires Laravel's language server into Claude Code (route names, config keys, view paths)
-- `laravel-inertia-react-structure` - Spatie's frontend structure conventions for Laravel Inertia + React
-- `livewire-4` - Build Livewire 4 components and applications
-- `speeding-up-laravel-tests` - Diagnose and fix slow Laravel/Pest test suites
+| Symbol | Meaning    |
+| :----: | ---------- |
+|  `!`   | Modified   |
+|  `+`   | Staged     |
+|  `?`   | Untracked  |
+|  `✘`   | Conflicted |
 
-**Code quality / review:**
+Red segment on non-zero exit codes. Needs a Nerd Font with powerline glyphs.
 
-- `audit-architecture` - Read-only, multi-agent architecture audit (data structures, state, control flow)
-- `review-code` - Review changed code against project conventions
-- `review-pr` - Review and merge GitHub PRs for Spatie packages
-- `test-audit` - Authoring gate for new tests, plus an audit workflow for low-value or duplicative tests
+</details>
 
-**Tools:**
+<details>
+<summary><b>Conductor terminal fallback</b></summary>
 
-- `code-snippet-images` - Generate code screenshot images for social/docs
+Conductor's terminal can't render Nerd Font glyphs. `.zshrc` and `.aliases` detect it (`$__CFBundleIdentifier` / `$CONDUCTOR_INTERNAL_BIN_DIR`) and switch automatically:
 
-**Marketing** (bundled plugin, `config/claude/skills/marketing/`, disabled by default):
+| Terminal            | Starship config              | `eza` icons |
+| ------------------- | ---------------------------- | :---------: |
+| Ghostty, iTerm, ... | `config/starship.toml`       |      ✓      |
+| Conductor           | `config/starship-plain.toml` |      ✗      |
 
-- ~25 sub-skills covering CRO, SEO, ads, copywriting, pricing, onboarding, and more for Spatie product sites
+</details>
 
-### Adding New Skills
+---
+
+## Daily use
+
+| Keys / command               | Does                                        |
+| ---------------------------- | ------------------------------------------- |
+| `z <dir>` · `zi`             | Jump to a frequent dir · interactive picker |
+| <kbd>Ctrl</kbd>+<kbd>R</kbd> | Fuzzy history                               |
+| <kbd>Ctrl</kbd>+<kbd>T</kbd> | Fuzzy file                                  |
+| <kbd>Alt</kbd>+<kbd>C</kbd>  | Fuzzy `cd`                                  |
+| `a` · `c` · `p`              | `php artisan` · `composer` · Pest/PHPUnit   |
+| `mfs`                        | `php artisan migrate:fresh --seed`          |
+| `nah`                        | `git reset --hard; git clean -df`           |
+| `btm`                        | System monitor (aliased from `top`/`htop`)  |
+| `bin/update`                 | Update dotfiles, Homebrew, npm, Composer    |
+
+<details>
+<summary><b>jq / yq examples</b></summary>
 
 ```bash
-# Install a new skill (adds directly to your dotfiles)
-npx skills add <owner/repo>
-
-# Commit to version control
-cd ~/.dotfiles
-git add config/claude/skills/
-git commit -m "Add new skill"
-git push
+curl api.github.com/users/PickleBoxer | jq
+cat composer.json | jq '.require'
+php artisan tinker --execute="echo json_encode(User::first());" | jq
+yq '.jobs' .github/workflows/ci.yml
+yq -o json docker-compose.yml
 ```
 
-Two rules that decide whether a skill ever gets used:
+</details>
 
-1. **The name and description determine everything.** A skill named after a person, or after a quarter of what it does, will not be found. Write the description around the phrases you would actually type.
-2. **Keep the body short and push detail into `references/`.** A skill body stays in context for the rest of the session once loaded, while reference files load only when needed.
+---
 
-Browse more skills at [skills.sh](https://skills.sh)
+## Dev stack
 
-### Bundled Plugins
+|                | Via      | Notes                                                                                       |
+| -------------- | -------- | ------------------------------------------------------------------------------------------- |
+| PHP + Composer | Homebrew | `brew upgrade php composer`                                                                 |
+| Node.js        | fnm      | `fnm install --lts`, `fnm use 20`, `fnm list`                                               |
+| **DDEV**       | Homebrew | Primary. Docker, per-project PHP, DB, services                                              |
+| Laravel Valet  | Composer | Optional, lighter, one global PHP. `composer global require laravel/valet && valet install` |
 
-`config/claude/skills/` doubles as a local plugin marketplace named `dotfiles-skills`, defined in `config/claude/skills/.claude-plugin/marketplace.json` and registered in `extraKnownMarketplaces` in `settings.json`. A directory with its own `.claude-plugin/plugin.json` is a plugin, which can be turned off globally and enabled per repository, so situational skills cost nothing in unrelated sessions.
+Both can coexist. Prefer DDEV when a project needs a specific PHP version or services (MySQL, Redis, ...).
 
-| Plugin | Contents | Enabled |
-| --- | --- | --- |
-| `laravel-lsp` | The Laravel language server, see [Code Intelligence](#code-intelligence) | Globally |
-| `marketing` | 29 marketing, CRO, and SEO skills | Off by default (`defaultEnabled: false`) |
+### DDEV commit signing
 
-To enable one in a repository, add it to that repo's `.claude/settings.json`:
+`bin/install` links `~/.gitconfig` and `~/.ssh/id_ed25519.pub` into `~/.ddev/homeadditions/` and adds the key to the host agent, so every container signs commits with your identity.
 
-```json
-{
-  "enabledPlugins": {
-    "laravel-lsp@dotfiles-skills": true
-  }
-}
+> [!IMPORTANT]
+> After each reboot run `ddev auth ssh` to forward the agent into containers.
+
+Custom SSH hosts inside containers (e.g. self-hosted GitLab): `~/.ddev/homeadditions/.ssh/config.d/custom.conf`.
+
+### Packages
+
+Everything lives in [`config/Brewfile`](config/Brewfile). Add a tool:
+
+```bash
+echo 'brew "tree"' >> ~/.dotfiles/config/Brewfile && brew bundle --file=~/.dotfiles/config/Brewfile
 ```
 
-A new plugin directory also needs an entry in `marketplace.json` before it can be enabled. Project-scope plugins only load from the directory you launch from, so start the CLI at the repository root.
+<details>
+<summary><b>Full package list</b></summary>
 
-### Settings (`config/claude/settings.json`)
+| Group                        | Packages                                                                                                                                               |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Core                         | node, php, php@8.4, composer, pkgconf, wget, ncdu, hub, gh, ack, doctl, 1password-cli, git-secret, imagemagick, yarn, ghostscript, mackup, mkcert, bun |
+| Local dev                    | ddev, phpmon                                                                                                                                           |
+| Apps                         | raycast, ghostty, google-chrome, slack, tableplus, visual-studio-code, dbngin, github, httpie-desktop, imageoptim, tinkerwell, the-unarchiver, vlc     |
+| Modern CLI                   | starship, zoxide, bat, eza, ripgrep, fd, git-delta, fnm, fzf, direnv, jq, yq, bottom, mas, tree, trash, uv, coreutils, gnu-sed, bash                   |
+| Zsh                          | zsh-autosuggestions, zsh-syntax-highlighting                                                                                                           |
+| Fonts                        | font-meslo-lg-nerd-font, font-jetbrains-mono(-nerd-font), font-fira-code(-nerd-font), font-open-sans, font-roboto, font-bitter, font-lato              |
+| QuickLook                    | qlmarkdown, betterzip, suspicious-package                                                                                                              |
+| PHP extensions _(prompted)_  | imagick, memcached, xdebug, redis                                                                                                                      |
+| Global Composer _(prompted)_ | laravel/pint, laravel/envoy, laravel/installer, spatie/phpunit-watcher                                                                                 |
 
-Symlinked to `~/.claude/settings.json`, so every project on this machine shares the same base config. Notable pieces:
+</details>
 
-- **`permissions`** - `allow`/`deny`/`ask` lists for tools and Bash commands, plus `defaultMode: auto`. The `deny` list blocks risky actions outright (e.g. `git commit`, `ExitPlanMode`); `ask` prompts before reading sensitive paths (`~/.ssh`, `.env` files).
-- **`enabledPlugins`** - toggles whole bundled plugins (e.g. `php-lsp`, `typescript-lsp`, `mattpocock-skills`) on/off globally.
-- **`skillOverrides`** - per-skill visibility for loose (non-plugin) skills. Values: `"on"` (default), `"name-only"`, `"user-invocable-only"`, or `"off"`. Used here to keep utility skills like `simplify`/`run`/`init` invocable only via explicit command, not auto-triggered.
-- **`autoMode`** - environment context (org, cloud provider, trusted domains, sensitive paths) that auto mode uses to judge which actions need confirmation. This is machine/project-specific, not something to copy between repos.
-- **`effortLevel`**, **`fastMode`**, **`spinnerVerbs`**, **`cleanupPeriodDays`** - misc behavior tuning.
+---
 
-#### Scoping skills/plugins per project
+## AI setup
 
-Both `enabledPlugins` and `skillOverrides` work the same way in **any** settings file Claude Code reads, not just the global one:
+One source in `config/claude/`, read by both Claude Code and Codex. Nothing is duplicated per tool.
 
-| Scope | File | Applies to |
-| ----- | ---- | ---------- |
-| User (this machine, all projects) | `~/.claude/settings.json` | everything, unless overridden below |
-| Shared project (committed, everyone who clones the repo) | `<repo>/.claude/settings.json` | just that repo |
-| Local project (this machine, this repo only, gitignored) | `<repo>/.claude/settings.local.json` | just that repo, just you |
+```
+config/claude/
+├── AGENTS.md       instructions, read natively by both harnesses
+├── settings.json   Claude Code settings, permissions, hooks
+├── rules/          always-loaded rules (commit conventions)
+├── agents/         custom subagents
+└── skills/         10 skills + 2 bundled plugins
+```
 
-Settings from these files merge (project-level list entries add to user-level ones rather than replacing them). So a specific repo can disable a globally-available skill, or turn on a plugin that's off everywhere else, without touching this dotfiles repo at all:
+### Skills
+
+| Area             | Skills                                                                                                                           |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Laravel / PHP    | `spatie-guidelines` · `spatie-package-skeleton` · `laravel-inertia-react-structure` · `livewire-4` · `speeding-up-laravel-tests` |
+| Review & quality | `review-code` · `review-pr` · `audit-architecture` · `test-audit`                                                                |
+| Tools            | `code-snippet-images`                                                                                                            |
+| Plugins          | `laravel-lsp` (on) · `marketing` (29 skills, off by default)                                                                     |
+
+<details>
+<summary><b>What each skill does</b></summary>
+
+- `spatie-guidelines`: Spatie's PHP, Laravel, JS, and Vue conventions
+- `spatie-package-skeleton`: scaffold Spatie-style packages
+- `laravel-inertia-react-structure`: frontend structure for Inertia + React
+- `livewire-4`: Livewire 4 components and apps
+- `speeding-up-laravel-tests`: diagnose slow Pest suites
+- `review-code` / `review-pr`: multi-lane review, see [Review workflow](#review-workflow)
+- `audit-architecture`: read-only multi-agent architecture audit
+- `test-audit`: gate for new tests, audit for low-value ones
+- `code-snippet-images`: code screenshots for social and docs
+
+</details>
+
+**Adding one:** `npx skills add <owner/repo>`, then commit `config/claude/skills/`. Browse at [skills.sh](https://skills.sh).
+
+> [!TIP]
+> The **name and description** decide whether a skill ever triggers, so write them around the phrases you'd type. Keep the body short and push detail into `references/`, which loads only on demand.
+
+### Agents
+
+```mermaid
+flowchart TD
+    M["Main session<br/>Opus, medium effort<br/>plan, edits, tests, answer"]
+    M -->|delegates by description| E["Explore<br/>Haiku, read-only<br/>LSP, Read, Grep, Glob"]
+    M -->|delegates by description| R["researcher<br/>Haiku, read-only + web<br/>WebFetch, WebSearch"]
+    E -.->|file:line refs| M
+    R -.->|sourced findings| M
+```
+
+- `Explore` replaces the built-in one with a Haiku agent that prefers LSP over grep
+- `researcher` handles docs, changelogs, and web lookups
+- `laravel-feature-builder` implements full Laravel features
+- Pass `model: "opus"` per call when a search needs judgment
+- PHP simplification comes from `laravel-simplifier` (`laravel@laravel` plugin), not a local agent
+
+### Code intelligence
+
+| Server                   | Files        | Gives                                              | Install                                          |
+| ------------------------ | ------------ | -------------------------------------------------- | ------------------------------------------------ |
+| `php-lsp` (Intelephense) | `.php`       | Types, references, signatures                      | `npm i -g intelephense`                          |
+| `laravel-lsp`            | `.blade.php` | Routes, config keys, views, translations, bindings | `composer global require laravel/lsp`            |
+| `typescript-lsp`         | `.ts` `.tsx` | TS intelligence                                    | `npm i -g typescript-language-server typescript` |
+
+> [!NOTE]
+> Claude Code allows **one server per file extension**. To let Laravel LSP own `.php`, disable `php-lsp` and add `".php"` to `skills/laravel-lsp/.lsp.json`. Its `phpEnvironment: auto` finds Herd and Valet.
+
+### Review workflow
+
+`review-code` and `review-pr` share [`lanes.md`](config/claude/skills/review-code/references/lanes.md): six lanes in parallel.
+
+|  #  | Lane               | Runs               | Needs                                                  |
+| :-: | ------------------ | ------------------ | ------------------------------------------------------ |
+|  1  | Correctness        | always             | `/code-review` (`code-review@claude-plugins-official`) |
+|  2  | PHP simplification | PHP changed        | `laravel-simplifier` agent (`laravel@laravel`)         |
+|  3  | Spatie conventions | always             | `spatie-guidelines`                                    |
+|  4  | Laravel practices  | if Boost installed | `laravel-best-practices` (per repo, via Laravel Boost) |
+|  5  | React              | JS/TS changed      | `vercel-react-best-practices`                          |
+|  6  | Security           | always             | `/security-review` (built in)                          |
+
+Priority: **security > correctness > conventions**. Defect findings need a concrete failure scenario. `review-pr` also needs `pr-review-toolkit@claude-plugins-official`. `lanes.md` has a per-harness table, so it runs under Codex too.
+
+<details>
+<summary><b>Settings, plugins, and per-project scoping</b></summary>
+
+`config/claude/settings.json` → `~/.claude/settings.json`, shared by every project.
+
+| Key                                                         | Purpose                                                                                                               |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `permissions`                                               | `allow` / `deny` / `ask` lists, `defaultMode: auto`. Denies e.g. `git commit`, asks before reading `~/.ssh` or `.env` |
+| `enabledPlugins`                                            | Toggle whole plugins (`php-lsp`, `typescript-lsp`, `mattpocock-skills`, ...)                                          |
+| `skillOverrides`                                            | Per loose skill: `on` · `name-only` · `user-invocable-only` · `off`                                                   |
+| `autoMode`                                                  | Machine-specific context for auto mode. Don't copy between repos                                                      |
+| `effortLevel` `fastMode` `spinnerVerbs` `cleanupPeriodDays` | Misc tuning                                                                                                           |
+
+**Bundled plugins.** `config/claude/skills/` is also a local marketplace, `dotfiles-skills` (`.claude-plugin/marketplace.json`, registered in `extraKnownMarketplaces`). A folder with its own `.claude-plugin/plugin.json` is a plugin and needs a `marketplace.json` entry. Launch the CLI from the repo root so project-scope plugins load.
+
+**Scoping.** Both keys work in any settings file, and list entries merge:
+
+| Scope              | File                                 |
+| ------------------ | ------------------------------------ |
+| User, all projects | `~/.claude/settings.json`            |
+| Project, committed | `<repo>/.claude/settings.json`       |
+| Project, just you  | `<repo>/.claude/settings.local.json` |
 
 ```json
-// <some-repo>/.claude/settings.json
+// <repo>/.claude/settings.json
 {
-  "skillOverrides": {
-    "sentry-cli": "off"
-  },
+  "skillOverrides": { "test-audit": "off" },
   "enabledPlugins": {
     "swift-architecture-skill@swift-architecture-skill": true
   }
 }
 ```
 
-That's the real pattern used for the Swift plugins registered in `extraKnownMarketplaces` (`swift-architecture-skill`, `swift-concurrency-agent-skill`, `swiftui-agent-skill`, `swift-testing-agent-skill`): they stay off in `enabledPlugins` globally, and get turned on per repo where they're actually relevant.
+The Swift plugins (`swift-architecture-skill`, `swift-concurrency-agent-skill`, `swiftui-agent-skill`, `swift-testing-agent-skill`) use exactly this: off globally, on per repo.
 
-`skillOverrides` only affects loose skills (the ones directly under `config/claude/skills/`, like `review-code` or `test-audit`). Plugin-bundled skills (like `marketing`, which ships its own `.claude-plugin/plugin.json`) are controlled via `enabledPlugins` instead, `skillOverrides` doesn't apply to them.
+> [!WARNING]
+> `skillOverrides` only affects loose skills. Plugin skills like `marketing` are toggled with `enabledPlugins`.
 
-### Agents (Version Controlled)
+</details>
 
-All custom agents are stored in `config/claude/agents/` and version-controlled with your dotfiles. When you run the installer on a new Mac, all agents are immediately available.
+<details>
+<summary><b>Sharing with Codex</b></summary>
 
-**Custom Agents:**
+|              | Claude Code                    | Codex                                     |
+| ------------ | ------------------------------ | ----------------------------------------- |
+| Instructions | `~/.claude/AGENTS.md`          | `~/.codex/AGENTS.md`                      |
+| Skills       | `~/.claude/skills` (whole dir) | `~/.agents/skills/*` (one link per skill) |
+| Invoke       | `/review-code`                 | `$review-code`                            |
 
-- `laravel-feature-builder` - Implements new features in Laravel applications (models, controllers, migrations, routes, views)
-- `Explore` - Replaces the built-in Explore (which runs on the main model) with a read-only Haiku agent that prefers LSP over grep for symbols
-- `researcher` - Read-only Haiku agent for docs, changelogs, and web lookups, returns findings with source URLs
+`bin/install-agent-skill-sync` installs a LaunchAgent (`dev.maticvertacnik.agent-skill-sync`) that runs at login, watches the skills dir, and rechecks every 60s. It links every dir with a top-level `SKILL.md`, cleans up removed ones, backs up conflicting installs to `~/.agents/backups/link-agent-skills.*`, and leaves unrelated skills alone. `bin/install-claude-code` sets it up on new machines.
 
-The main session stays on Opus and delegates search and research to the cheaper Haiku agents, picked by their `description`. Only short summaries come back, so raw search output stays out of the main context.
+- Run now: `bin/link-agent-skills`
+- Logs: `~/Library/Logs/dev.maticvertacnik.agent-skill-sync.log`
+- Skill missing in Codex? Restart it.
 
-```
-┌──────────────────────────────────────────────────────────┐
-│  MAIN SESSION  (Opus, medium effort)                     │
-│  owns the plan, edits, tests, final answer               │
-└──────┬─────────────────────────────────┬─────────────────┘
-       │  delegates when the task matches the description
-       ▼                                 ▼
-┌──────────────────────┐        ┌──────────────────────────┐
-│ Explore              │        │ researcher               │
-│ haiku, read-only     │        │ haiku, read-only + web   │
-│ LSP, Read, Grep,     │        │ WebFetch, WebSearch,     │
-│ Glob                 │        │ Read, Grep, Glob         │
-└──────────┬───────────┘        └────────────┬─────────────┘
-           └──── file:line refs / sourced findings back ────┘
-```
-
-Opus can still pass `model: "opus"` for a single call when a search needs judgment, since the per-call model overrides the agent's frontmatter.
-
-Most PHP simplification now happens through the `laravel-simplifier:laravel-simplifier` agent, from the `laravel@laravel` plugin marketplace enabled in `enabledPlugins`, rather than a custom agent in this repo. It's lane 2 of the review workflow below.
-
-### Code Intelligence
-
-Three language servers give the agent diagnostics after every edit and real symbol navigation instead of grep.
-
-| Server | Provides | Install |
-| --- | --- | --- |
-| `laravel-lsp@dotfiles-skills` | Config keys, route names, view paths, translation strings, middleware aliases, and container bindings, in `.blade.php` | `composer global require laravel/lsp` |
-| `php-lsp` | PHP types, symbols, references, signatures | `npm i -g intelephense` |
-| `typescript-lsp` | TypeScript and TSX intelligence | `npm i -g typescript-language-server typescript` |
-
-Laravel LSP is first-party and has no official Claude plugin, so `skills/laravel-lsp/` wraps it in a small `.lsp.json`. Its `phpEnvironment` defaults to `auto`, which finds Herd and Valet without configuration.
-
-Claude Code registers **one server per file extension**, so the two PHP servers split the work: Intelephense takes `.php` for types, undefined methods, and references, and Laravel LSP takes `.blade.php` for route names, view paths, and translation strings. To flip that priority, disable `php-lsp` and add `".php"` to `skills/laravel-lsp/.lsp.json`.
-
-### The Review Workflow
-
-`review-code` and `review-pr` share one definition of what a review is, in `skills/review-code/references/lanes.md`. Six lanes run in parallel, each with its own dependency:
-
-| Lane | Checks | Needs |
-| --- | --- | --- |
-| 1. Correctness (always) | Bugs | `/code-review` command, from the `code-review@claude-plugins-official` plugin |
-| 2. PHP simplification | Simplify PHP/Laravel code | `laravel-simplifier:laravel-simplifier` agent, from `laravel@laravel` |
-| 3. Spatie conventions | Style, docblocks, naming, Blade, git workflow | `spatie-guidelines` skill |
-| 4. Laravel practices | Routing, database performance, architecture | `laravel-best-practices` skill, installed per-project by Laravel Boost into `<repo>/.claude/skills/`; the lane is skipped in repos without it |
-| 5. React (only if JS/TS changed) | Hooks, effects, component design | `vercel-react-best-practices` skill |
-| 6. Security (always) | Authorization, mass assignment, injection, XSS, secrets, SSRF, PII in logs | `/security-review`, built into the Claude Code CLI itself |
-
-Findings are deduplicated, and security outranks correctness, which outranks conventions. Both defect lanes require a concrete failure scenario, so "consider adding a null check" does not count as a finding.
-
-`review-pr` additionally needs `pr-review-toolkit@claude-plugins-official` for its own `/review-pr` command.
-
-The lanes file has a per-harness table, so the same review runs under Codex with its own tools and available subagents.
-
-### Sharing With Codex
-
-Codex and Claude Code both read `AGENTS.md` natively, so one file is symlinked under that name for both. Skills also have one source: `config/claude/skills/`. Claude reads it through `~/.claude/skills`; Codex reads individual symlinks in `~/.agents/skills`, its documented user skill directory.
-
-```bash
-bin/install-agent-skill-sync
-```
-
-The script links every directory with a top-level `SKILL.md` and installs a per-user macOS LaunchAgent (`dev.maticvertacnik.agent-skill-sync`) so no manual command is needed when adding skills. It runs at login, watches the source directory, and checks every 60 seconds for changes inside existing folders. Removed or renamed skills have their old managed links cleaned up. `bin/install-claude-code` installs this job automatically on new machines.
-
-Edits to an already linked skill are shared immediately. Existing installations with the same directory name are moved to `~/.agents/backups/link-agent-skills.*` before linking, and unrelated skills are left alone. Repeated runs leave correct links untouched.
-
-To run a check immediately without waiting on the background job, use `bin/link-agent-skills`. Background errors go to `~/Library/Logs/dev.maticvertacnik.agent-skill-sync.log`.
-
-In Codex, invoke skills with a `$` prefix, for example `$review-code` or `$review-pr`. If a newly linked skill does not appear, restart Codex.
+</details>
 
 ---
 
-## Customization
+## Customize
 
-### Personal Aliases & Functions
+| What                                          | Where                                              |
+| --------------------------------------------- | -------------------------------------------------- |
+| Private aliases, functions, exports, `.zshrc` | `~/.dotfiles-custom/shell/` (auto-loaded)          |
+| Private skills                                | `~/.dotfiles-custom/claude/skills/<name>/SKILL.md` |
+| Per-project env vars                          | `.envrc` + `direnv allow`                          |
 
-Create custom configurations that won't be committed:
+<details>
+<summary><b>How private skills work</b></summary>
 
-```bash
-mkdir -p ~/.dotfiles-custom/shell
-vim ~/.dotfiles-custom/shell/.aliases
-```
-
-These files are automatically loaded by `.zshrc` if they exist.
-
-### Private Skills
-
-Skills that should not be published live in the private [PickleBoxer/dotfiles-custom](https://github.com/PickleBoxer/dotfiles-custom) repo, cloned to `~/.dotfiles-custom`:
-
-```
-~/.dotfiles-custom/
-├── claude/skills/<name>/SKILL.md   private skills
-└── shell/                          private .exports, .aliases, .functions, .zshrc
-```
-
-`bin/link-private-skills` symlinks each private skill into `config/claude/skills/` and adds it to this repo's `.git/info/exclude`, so Claude Code and Codex load it like any other skill while git never sees it. Unlike `.gitignore`, the exclude file is local and never committed, so private skill names stay private and nothing conflicts with upstream.
-
-It runs as the first step of `bin/link-agent-skills`, so the agent-skill-sync job keeps private links current too. Removed private skills have their links cleaned up, and a private skill never replaces a tracked skill with the same name.
-
-To add one:
+`bin/link-private-skills` symlinks each one into `config/claude/skills/` and adds it to `.git/info/exclude`, so both harnesses load it while git never sees it. The exclude file is local, so names stay private and nothing conflicts with upstream. It runs first in `bin/link-agent-skills`, so the sync job keeps it current. A private skill never replaces a tracked one with the same name.
 
 ```bash
 mkdir -p ~/.dotfiles-custom/claude/skills/my-skill
 vim ~/.dotfiles-custom/claude/skills/my-skill/SKILL.md
 ~/.dotfiles/bin/link-private-skills   # or wait up to a minute
-cd ~/.dotfiles-custom && git add -A && git commit -m "feat(skills): add my-skill" && git push
 ```
 
-### Project-Specific Variables
+</details>
 
-Use `direnv` for automatic environment loading:
+---
+
+## Maintain
+
+<details>
+<summary><b>What gets symlinked</b></summary>
+
+| `~/`                                                    | → `~/.dotfiles/`                        |
+| ------------------------------------------------------- | --------------------------------------- |
+| `.zshrc` · `.gitconfig` · `.global-gitignore`           | `home/`                                 |
+| `.mackup.cfg`                                           | `macos/`                                |
+| `.claude/{skills,agents,rules,settings.json,AGENTS.md}` | `config/claude/`                        |
+| `.codex/AGENTS.md`                                      | `config/claude/AGENTS.md`               |
+| `.agents/skills/*`                                      | `config/claude/skills/*`                |
+| `.config/ghostty/{config,themes}`                       | `config/ghostty/`                       |
+| `bin/php-format`                                        | `bin/php-format`                        |
+| `.ddev/homeadditions/{.gitconfig,.ssh/id_ed25519.pub}`  | `~/.gitconfig`, `~/.ssh/id_ed25519.pub` |
+
+Sourced by `.zshrc`, not linked: `home/.aliases`, `home/.functions`, `home/.exports`.
+
+</details>
+
+<details>
+<summary><b>Scripts in <code>bin/</code></b></summary>
+
+| Script                     | Does                                                                                                             |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `install`                  | Full setup, idempotent                                                                                           |
+| `install-claude-code`      | AI setup only: CLI, symlinks, Codex links                                                                        |
+| `update`                   | Update dotfiles, Homebrew, npm, Composer                                                                         |
+| `doctor`                   | Health check                                                                                                     |
+| `link-agent-skills`        | Link skills and `AGENTS.md` into Codex                                                                           |
+| `link-private-skills`      | Link private skills, excluded from git                                                                           |
+| `install-agent-skill-sync` | Background job keeping skill links current                                                                       |
+| `conductor-merge`          | Fast-forward the Conductor workspace branch into `main`. `--push` also pushes, clearing Conductor's Changes view |
+| `exclude-from-spotlight`   | Drop `.metadata_never_index` in data-heavy dirs so `mds_stores` stays idle                                       |
+
+</details>
+
+<details>
+<summary><b>Syncing from upstream (freekmurze/dotfiles)</b></summary>
+
+`main` merges `upstream/main`, so merge commits record which upstream commits are handled.
+
+**One-time setup**
 
 ```bash
-cd my-project
-echo 'export DEBUG=true' > .envrc
-direnv allow
-```
-
-Variables load when you enter the directory and unload when you leave.
-
----
-
-## Post-Installation
-
-1. **Restore settings** (optional): Run `mackup restore` if you have backups
-
----
-
-## Tool Comparisons
-
-| Old Tool        | New Tool | Why Better                              |
-| --------------- | -------- | --------------------------------------- |
-| z.sh / autojump | zoxide   | Smarter frecency algorithm, Rust speed  |
-| nvm             | fnm      | 40x faster, simpler, Rust-based         |
-| cat             | bat      | Syntax highlighting, git integration    |
-| ls              | eza      | Icons, tree view, git status            |
-| grep            | ripgrep  | 5-10x faster, respects .gitignore       |
-| find            | fd       | Simpler syntax, 10x faster              |
-| diff            | delta    | Side-by-side diffs, syntax highlighting |
-| htop            | bottom   | Better UI, graphs, Rust-based           |
-
----
-
-## Utilities
-
-The `bin/` directory contains helper scripts:
-
-- **install** - Main installation script (idempotent, safe to re-run)
-- **install-claude-code** - Standalone installer for the AI setup: the CLI, the symlinks, and the Codex links
-- **link-agent-skills** - Symlink the harness-neutral skills and `AGENTS.md` into Codex, leaving Codex's own built-in skills alone
-- **link-private-skills** - Symlink private skills from `~/.dotfiles-custom` into `config/claude/skills/`, excluded from git
-- **install-agent-skill-sync** - Install the macOS background job that keeps shared skill links current automatically
-- **update** - Update dotfiles, Homebrew, npm, and Composer packages
-- **doctor** - Health check and diagnostic tool
-- **conductor-merge** - Fast-forward the current Conductor workspace branch into `main` (which lives in another git worktree). Use `--push` to also push `main` to `origin`, which clears Conductor's "Changes" view (it diffs against `origin/main`).
-- **exclude-from-spotlight** - Drops a `.metadata_never_index` marker into data-heavy directories (e.g. local databases) so Spotlight skips them. Their constantly rewritten files would otherwise keep `mds_stores` busy indefinitely
-
----
-
-## Syncing Changes from Upstream (freekmurze/dotfiles)
-
-This repo is forked from [freekmurze/dotfiles](https://github.com/freekmurze/dotfiles). `main` is the customized version and upstream changes are merged into it, so the merge commits record exactly which upstream commits are already handled.
-
-```
-upstream/main   read-only mirror of freekmurze/dotfiles (updated by git fetch)
-main            customized version, merges upstream/main in
-sync/upstream   short-lived branch for testing a merge
-```
-
-**One-time setup (per clone):**
-
-```bash
-cd ~/.dotfiles
 git remote add upstream git@github.com:freekmurze/dotfiles.git
-git remote set-url --push upstream no_push   # never push to upstream by accident
-git config rerere.enabled true               # remember conflict resolutions
-git config merge.conflictStyle zdiff3        # show the common ancestor in conflicts
+git remote set-url --push upstream no_push   # never push upstream
+git config rerere.enabled true               # remember resolutions
+git config merge.conflictStyle zdiff3        # show common ancestor
 ```
 
-**1. Check what is new:**
+**Each sync**
 
 ```bash
-git fetch upstream
-git log --oneline main..upstream/main
+git fetch upstream && git log --oneline main..upstream/main   # empty = up to date
+git switch -c sync/upstream main && git merge upstream/main   # resolve, reload shell, test
+git switch main && git merge --ff-only sync/upstream && git branch -d sync/upstream && git push origin main
 ```
 
-Empty output means you are fully up to date. Use `git show <hash> --stat` to inspect a commit.
-
-**2. Merge on a throwaway branch:**
-
-```bash
-git switch -c sync/upstream main
-git merge upstream/main
-```
-
-Resolve conflicts, then reload the shell and check that everything still works.
-
-**3. Skip upstream commits you don't want (optional):**
-
-Merge up to the commit before the unwanted one, then record the unwanted commit as handled without taking its changes:
+**Skip an unwanted commit:** merge up to the one before it, then mark it handled:
 
 ```bash
 git merge <hash-before-unwanted>
 git merge -s ours <unwanted-hash> -m "chore(upstream): skip <reason>"
 ```
 
-Alternatively merge everything and `git revert` the parts you don't want.
+Or merge everything and `git revert` what you don't want.
 
-**4. Fast-forward main and clean up:**
+| Query                                               | Shows                   |
+| --------------------------------------------------- | ----------------------- |
+| `git log --oneline main..upstream/main`             | Upstream not merged yet |
+| `git log --oneline --no-merges upstream/main..main` | Your customizations     |
+| `git log --oneline --first-parent main`             | One line per sync       |
 
-```bash
-git switch main
-git merge --ff-only sync/upstream
-git branch -d sync/upstream
-git push origin main
-```
+> [!TIP]
+> Keep personal changes in files upstream never touches (see [Customize](#customize)) to keep conflicts rare.
 
-**Useful queries:**
-
-```bash
-git log --oneline main..upstream/main              # upstream commits not merged yet
-git log --oneline --no-merges upstream/main..main  # your customizations
-git log --oneline --first-parent main              # your timeline, one line per sync
-```
-
-Keep personal changes in files upstream never touches (see [Customization](#customization)) to keep conflicts rare.
+</details>
 
 ---
 
-## Credits
-
-Created by [Freek Van der Herten](https://github.com/freekmurze). Used by many at [Spatie](https://spatie.be).
-
-See `config/Brewfile` for complete package list.
+Created by [Freek Van der Herten](https://github.com/freekmurze), used by many at [Spatie](https://spatie.be).
