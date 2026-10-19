@@ -209,13 +209,10 @@ config/claude/
 ```mermaid
 flowchart TD
     M["Main session<br/>Opus, medium effort<br/>plan, edits, tests, answer"]
-    M -->|delegates by description| E["Explore<br/>Haiku, read-only<br/>LSP, Read, Grep, Glob"]
     M -->|delegates by description| R["researcher<br/>Haiku, read-only + web<br/>WebFetch, WebSearch"]
-    E -.->|file:line refs| M
     R -.->|sourced findings| M
 ```
 
-- `Explore` replaces the built-in one with a Haiku agent that prefers LSP over grep
 - `researcher` handles docs, changelogs, and web lookups
 - `laravel-feature-builder` implements full Laravel features
 - Pass `model: "opus"` per call when a search needs judgment
