@@ -113,10 +113,8 @@
     "commit-commands@claude-plugins-official": false,
     "frontend-design@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
-    "laravel-lsp@dotfiles-skills": true,
     "html-plan@claude-community": true,
     "mattpocock-skills@mattpocock": true,
-    "burn@pickleboxer": true,
     "drift@pickleboxer": true,
     "peek@pickleboxer": true
   },
@@ -143,12 +141,6 @@
       "source": {
         "source": "github",
         "repo": "twostraws/Swift-Testing-Agent-Skill"
-      }
-    },
-    "dotfiles-skills": {
-      "source": {
-        "source": "directory",
-        "path": "/Users/maticvertacnik/.dotfiles/config/claude/skills"
       }
     },
     "claude-community": {
