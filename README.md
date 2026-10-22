@@ -172,29 +172,24 @@ config/claude/
 ├── settings.json   Claude Code settings, permissions, hooks
 ├── rules/          always-loaded rules (commit conventions)
 ├── agents/         custom subagents
-└── skills/         10 skills + 2 bundled plugins
+└── skills/         6 skills
 ```
 
 ### Skills
 
-| Area             | Skills                                                                                                                           |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Laravel / PHP    | `spatie-guidelines` · `spatie-package-skeleton` · `laravel-inertia-react-structure` · `livewire-4` · `speeding-up-laravel-tests` |
-| Review & quality | `review-code` · `review-pr` · `audit-architecture` · `test-audit`                                                                |
-| Tools            | `code-snippet-images`                                                                                                            |
-| Plugins          | `laravel-lsp` (on) · `marketing` (29 skills, off by default)                                                                     |
+| Area             | Skills                                                                                |
+| ---------------- | ------------------------------------------------------------------------------------- |
+| Laravel / PHP    | `spatie-guidelines` · `laravel-inertia-react-structure` · `speeding-up-laravel-tests` |
+| Review & quality | `review-code` · `review-pr`                                                           |
+| Tools            | `code-snippet-images`                                                                 |
 
 <details>
 <summary><b>What each skill does</b></summary>
 
 - `spatie-guidelines`: Spatie's PHP, Laravel, JS, and Vue conventions
-- `spatie-package-skeleton`: scaffold Spatie-style packages
 - `laravel-inertia-react-structure`: frontend structure for Inertia + React
-- `livewire-4`: Livewire 4 components and apps
 - `speeding-up-laravel-tests`: diagnose slow Pest suites
 - `review-code` / `review-pr`: multi-lane review, see [Review workflow](#review-workflow)
-- `audit-architecture`: read-only multi-agent architecture audit
-- `test-audit`: gate for new tests, audit for low-value ones
 - `code-snippet-images`: code screenshots for social and docs
 
 </details>
@@ -220,14 +215,10 @@ flowchart TD
 
 ### Code intelligence
 
-| Server                   | Files        | Gives                                              | Install                                          |
-| ------------------------ | ------------ | -------------------------------------------------- | ------------------------------------------------ |
-| `php-lsp` (Intelephense) | `.php`       | Types, references, signatures                      | `npm i -g intelephense`                          |
-| `laravel-lsp`            | `.blade.php` | Routes, config keys, views, translations, bindings | `composer global require laravel/lsp`            |
-| `typescript-lsp`         | `.ts` `.tsx` | TS intelligence                                    | `npm i -g typescript-language-server typescript` |
-
-> [!NOTE]
-> Claude Code allows **one server per file extension**. To let Laravel LSP own `.php`, disable `php-lsp` and add `".php"` to `skills/laravel-lsp/.lsp.json`. Its `phpEnvironment: auto` finds Herd and Valet.
+| Server                   | Files        | Gives                         | Install                                          |
+| ------------------------ | ------------ | ----------------------------- | ------------------------------------------------ |
+| `php-lsp` (Intelephense) | `.php`       | Types, references, signatures | `npm i -g intelephense`                          |
+| `typescript-lsp`         | `.ts` `.tsx` | TS intelligence               | `npm i -g typescript-language-server typescript` |
 
 ### Review workflow
 
@@ -257,8 +248,6 @@ Priority: **security > correctness > conventions**. Defect findings need a concr
 | `autoMode`                                                  | Machine-specific context for auto mode. Don't copy between repos                                                      |
 | `effortLevel` `fastMode` `spinnerVerbs` `cleanupPeriodDays` | Misc tuning                                                                                                           |
 
-**Bundled plugins.** `config/claude/skills/` is also a local marketplace, `dotfiles-skills` (`.claude-plugin/marketplace.json`, registered in `extraKnownMarketplaces`). A folder with its own `.claude-plugin/plugin.json` is a plugin and needs a `marketplace.json` entry. Launch the CLI from the repo root so project-scope plugins load.
-
 **Scoping.** Both keys work in any settings file, and list entries merge:
 
 | Scope              | File                                 |
@@ -270,7 +259,7 @@ Priority: **security > correctness > conventions**. Defect findings need a concr
 ```json
 // <repo>/.claude/settings.json
 {
-  "skillOverrides": { "test-audit": "off" },
+  "skillOverrides": { "code-snippet-images": "off" },
   "enabledPlugins": {
     "swift-architecture-skill@swift-architecture-skill": true
   }
@@ -280,7 +269,7 @@ Priority: **security > correctness > conventions**. Defect findings need a concr
 The Swift plugins (`swift-architecture-skill`, `swift-concurrency-agent-skill`, `swiftui-agent-skill`, `swift-testing-agent-skill`) use exactly this: off globally, on per repo.
 
 > [!WARNING]
-> `skillOverrides` only affects loose skills. Plugin skills like `marketing` are toggled with `enabledPlugins`.
+> `skillOverrides` only affects loose skills. Plugin skills are toggled with `enabledPlugins`.
 
 </details>
 

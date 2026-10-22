@@ -1,8 +1,0 @@
-{
-  "laravel": {
-    "command": "laravel-lsp",
-    "extensionToLanguage": {
-      ".blade.php": "blade"
-    }
-  }
-}

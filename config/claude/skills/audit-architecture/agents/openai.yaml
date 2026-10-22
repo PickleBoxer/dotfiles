@@ -1,3 +1,0 @@
-# Preserve the explicit-only invocation policy from SKILL.md in Codex.
-policy:
-  allow_implicit_invocation: false
