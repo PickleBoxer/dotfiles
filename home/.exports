@@ -20,5 +20,3 @@ export MANPAGER="less -X"
 
 # Grep color is now handled by aliases (GREP_OPTIONS is deprecated)
 
-# Do not auto update brew
-export HOMEBREW_NO_AUTO_UPDATE=1
