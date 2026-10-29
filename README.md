@@ -226,7 +226,7 @@ flowchart TD
 | Key                                                         | Purpose                                                                                                               |
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `permissions`                                               | `allow` / `deny` / `ask` lists, `defaultMode: auto`. Denies e.g. `git commit`, asks before reading `~/.ssh` or `.env` |
-| `enabledPlugins`                                            | Toggle whole plugins (`php-lsp`, `typescript-lsp`, `mattpocock-skills`, ...)                                          |
+| `enabledPlugins`                                            | Toggle whole plugins (`php-lsp`, `typescript-lsp`, `pickle`, ...)                                                     |
 | `skillOverrides`                                            | Per loose skill: `on` · `name-only` · `user-invocable-only` · `off`                                                   |
 | `autoMode`                                                  | Machine-specific context for auto mode. Don't copy between repos                                                      |
 | `effortLevel` `fastMode` `spinnerVerbs` `cleanupPeriodDays` | Misc tuning                                                                                                           |
