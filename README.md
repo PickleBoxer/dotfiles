@@ -172,7 +172,7 @@ config/claude/
 ├── settings.json   Claude Code settings, permissions, hooks
 ├── rules/          always-loaded rules (commit conventions)
 ├── agents/         custom subagents
-└── skills/         6 skills
+└── skills/         4 skills
 ```
 
 ### Skills
@@ -180,7 +180,6 @@ config/claude/
 | Area             | Skills                                                                                |
 | ---------------- | ------------------------------------------------------------------------------------- |
 | Laravel / PHP    | `spatie-guidelines` · `laravel-inertia-react-structure` · `speeding-up-laravel-tests` |
-| Review & quality | `review-code` · `review-pr`                                                           |
 | Tools            | `code-snippet-images`                                                                 |
 
 <details>
@@ -189,7 +188,6 @@ config/claude/
 - `spatie-guidelines`: Spatie's PHP, Laravel, JS, and Vue conventions
 - `laravel-inertia-react-structure`: frontend structure for Inertia + React
 - `speeding-up-laravel-tests`: diagnose slow Pest suites
-- `review-code` / `review-pr`: multi-lane review, see [Review workflow](#review-workflow)
 - `code-snippet-images`: code screenshots for social and docs
 
 </details>
@@ -219,21 +217,6 @@ flowchart TD
 | ------------------------ | ------------ | ----------------------------- | ------------------------------------------------ |
 | `php-lsp` (Intelephense) | `.php`       | Types, references, signatures | `npm i -g intelephense`                          |
 | `typescript-lsp`         | `.ts` `.tsx` | TS intelligence               | `npm i -g typescript-language-server typescript` |
-
-### Review workflow
-
-`review-code` and `review-pr` share [`lanes.md`](config/claude/skills/review-code/references/lanes.md): six lanes in parallel.
-
-|  #  | Lane               | Runs               | Needs                                                  |
-| :-: | ------------------ | ------------------ | ------------------------------------------------------ |
-|  1  | Correctness        | always             | `/code-review` (`code-review@claude-plugins-official`) |
-|  2  | PHP simplification | PHP changed        | `laravel-simplifier` agent (`laravel@laravel`)         |
-|  3  | Spatie conventions | always             | `spatie-guidelines`                                    |
-|  4  | Laravel practices  | if Boost installed | `laravel-best-practices` (per repo, via Laravel Boost) |
-|  5  | React              | JS/TS changed      | `vercel-react-best-practices`                          |
-|  6  | Security           | always             | `/security-review` (built in)                          |
-
-Priority: **security > correctness > conventions**. Defect findings need a concrete failure scenario. `review-pr` also needs `pr-review-toolkit@claude-plugins-official`. `lanes.md` has a per-harness table, so it runs under Codex too.
 
 <details>
 <summary><b>Settings, plugins, and per-project scoping</b></summary>
@@ -280,7 +263,7 @@ The Swift plugins (`swift-architecture-skill`, `swift-concurrency-agent-skill`, 
 | ------------ | ------------------------------ | ----------------------------------------- |
 | Instructions | `~/.claude/AGENTS.md`          | `~/.codex/AGENTS.md`                      |
 | Skills       | `~/.claude/skills` (whole dir) | `~/.agents/skills/*` (one link per skill) |
-| Invoke       | `/review-code`                 | `$review-code`                            |
+| Invoke       | `/spatie-guidelines`           | `$spatie-guidelines`                      |
 
 `bin/install-agent-skill-sync` installs a LaunchAgent (`dev.maticvertacnik.agent-skill-sync`) that runs at login, watches the skills dir, and rechecks every 60s. It links every dir with a top-level `SKILL.md`, cleans up removed ones, backs up conflicting installs to `~/.agents/backups/link-agent-skills.*`, and leaves unrelated skills alone. `bin/install-claude-code` sets it up on new machines.
 
