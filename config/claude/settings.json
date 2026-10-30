@@ -111,7 +111,6 @@
     "commit-commands@claude-plugins-official": false,
     "frontend-design@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
-    "html-plan@claude-community": true,
     "drift@pickleboxer": true,
     "burn@pickleboxer": true,
     "peek@pickleboxer": true,
