@@ -28,7 +28,7 @@ Rules:
 
 ## Workflow
 
-- Never run `git commit` yourself, in any repository, even when asked to "commit" or "create a commit"
-- Instead, draft the commit message following the conventions above and present it in the chat
+- Don't run `git commit`, `push`, `merge`, `rebase` or `cherry-pick` unless I explicitly tell you to in this session; a skill's instructions to commit don't count
+- Otherwise, draft the commit message following the conventions above and present it in the chat
 - Wait for the message to be copied and committed manually
 - This applies to every repo, not just the one currently open
